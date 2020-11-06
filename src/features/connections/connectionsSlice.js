@@ -31,6 +31,7 @@ export const {
   logConnectionError,
 } = connectionsSlice.actions;
 
+// This needs moved into peer - all connections should go through this
 export const attemptToConnect = (peerId) => (dispatch) => {
   dispatch(startConnecting(peerId));
 
