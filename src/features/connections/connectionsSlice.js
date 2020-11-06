@@ -34,7 +34,7 @@ export const {
 export const attemptToConnect = (peerId) => (dispatch) => {
   dispatch(startConnecting(peerId));
 
-  connect(peerId)
+  connect(peerId, dispatch)
     .then(() =>
       dispatch(addConnection({ id: peerId, connection: { id: peerId } }))
     )

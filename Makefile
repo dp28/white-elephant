@@ -11,7 +11,7 @@ test: node_modules
 	REACT_APP_ENVIRONMENT=test yarn test
 
 start: node_modules
-	REACT_APP_ENVIRONMENT=$(ENVIRONMENT) PORT=3001 HTTPS=true yarn start
+	REACT_APP_ENVIRONMENT=$(ENVIRONMENT) HTTPS=true yarn start
 
 build: node_modules
 	REACT_APP_ENVIRONMENT=$(ENVIRONMENT) yarn build
