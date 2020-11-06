@@ -17,7 +17,7 @@ build: node_modules
 	REACT_APP_ENVIRONMENT=$(ENVIRONMENT) yarn build
 
 deploy: build
-	aws s3 sync build/ s3://white-elephant.djpdev.com
+	aws s3 sync build/ s3://white-elephant.djpdev.com --acl public-read
 
 node_modules: package.json
 	yarn install
