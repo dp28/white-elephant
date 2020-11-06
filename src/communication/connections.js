@@ -1,5 +1,12 @@
 import { getPeer } from "./peer";
 import { listen } from "./handleMessages";
+import {
+  addConnection,
+  logConnectionError,
+  disconnect,
+  startConnecting,
+} from "../features/connections/connectionsSlice";
+import { fetchId } from "../app/identity";
 
 export async function buildConnections(store) {
   const peer = await getPeer();
@@ -8,7 +15,7 @@ export async function buildConnections(store) {
   peer.on("connection", (connection) => {
     const id = connection.metadata.id;
     connections[id] = connection;
-    // dispatch(addConnection({ id }));
+    store.dispatch(addConnection({ id, incoming: true }));
     listen({ connection, store });
   });
 
@@ -20,22 +27,30 @@ export async function buildConnections(store) {
       return Promise.resolve(connections[id]);
     }
 
+    store.dispatch(startConnecting(id));
+
     return new Promise((resolve, reject) => {
-      const connection = peer.connect(id, { metadata: { id }, reliable: true });
+      const connection = peer.connect(id, {
+        metadata: { id: fetchId() },
+        reliable: true,
+      });
 
       connection.on("open", () => {
         console.debug("Connected to", id);
         connections[id] = connection;
+        store.dispatch(addConnection({ id }));
         resolve(connection);
       });
 
       connection.on("error", (error) => {
         console.error("Failed to connect", error);
+        store.dispatch(logConnectionError({ id }));
         reject(error);
       });
 
       connection.on("close", () => {
-        console.error("Closed", id);
+        console.debug("Closed", id);
+        store.dispatch(disconnect({ id }));
       });
 
       listen({ connection, store });

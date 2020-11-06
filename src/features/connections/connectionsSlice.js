@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { connect } from "../../app/peer";
 
 export const connectionsSlice = createSlice({
   name: "connections",
@@ -10,8 +9,9 @@ export const connectionsSlice = createSlice({
   },
   reducers: {
     startConnecting: (state, action) => {
-      if (state.connectingTo.indexOf(action.payload) < 0) {
-        state.connectingTo.push(action.payload);
+      const id = action.payload;
+      if (!state.connectionsById[id] && state.connectingTo.indexOf(id) < 0) {
+        state.connectingTo.push(id);
       }
     },
     addConnection: (state, action) => {
@@ -22,6 +22,9 @@ export const connectionsSlice = createSlice({
     logConnectionError: (state, action) => {
       state.failedConnectionsById[action.payload.id] = action.payload.error;
     },
+    disconnect: (state, action) => {
+      delete state.connectionsById[action.payload.id];
+    },
   },
 });
 
@@ -29,18 +32,8 @@ export const {
   startConnecting,
   addConnection,
   logConnectionError,
+  disconnect,
 } = connectionsSlice.actions;
-
-// This needs moved into peer - all connections should go through this
-export const attemptToConnect = (peerId) => (dispatch) => {
-  dispatch(startConnecting(peerId));
-
-  connect(peerId, dispatch)
-    .then(() =>
-      dispatch(addConnection({ id: peerId, connection: { id: peerId } }))
-    )
-    .catch((error) => dispatch(logConnectionError({ id: peerId, error })));
-};
 
 export const selectConnectingCount = (state) =>
   state.connections.connectingTo.length;
