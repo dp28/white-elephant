@@ -5,7 +5,6 @@ import App from "./App";
 import store from "./app/store";
 import { Provider } from "react-redux";
 import * as serviceWorker from "./serviceWorker";
-import { startListening } from "./app/peer";
 import { tryToJoinGame } from "./features/game/gameSlice";
 
 ReactDOM.render(
@@ -19,7 +18,6 @@ ReactDOM.render(
 
 const dispatch = (action) => store.dispatch(action);
 
-startListening(dispatch);
 tryToJoinGame(dispatch);
 
 // If you want your app to work offline and load faster, you can change

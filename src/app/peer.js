@@ -25,7 +25,7 @@ function createPeer() {
   });
 }
 
-export async function connect(id, dispatch) {
+async function connect(id, dispatch) {
   console.debug("Connecting to", id);
 
   if (Connections[id]) {
@@ -57,7 +57,7 @@ export async function connect(id, dispatch) {
   });
 }
 
-export async function startListening(dispatch) {
+async function startListening(dispatch) {
   const peer = await getPeer();
 
   peer.on("connection", (connection) => {
@@ -68,7 +68,7 @@ export async function startListening(dispatch) {
   });
 }
 
-export async function broadcastImage(image) {
+async function broadcastImage(image) {
   const { id, fileName, fileType, caption, url } = image;
   const data = await fetch(url).then((r) => r.blob());
   const payload = {
@@ -89,7 +89,7 @@ function tell(connectionId, message) {
   Connections[connectionId].send(message);
 }
 
-export async function ask({ connectionId, requestBody, dispatch }) {
+async function ask({ connectionId, requestBody, dispatch }) {
   try {
     console.log(await connect(connectionId, dispatch));
     const request = {

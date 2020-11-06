@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import cuid from "cuid";
-import { ask } from "../../app/peer";
 import { fetchId } from "../../app/identity";
+import { sendMessage } from "../messages/messagesSlice";
+import { buildRequest } from "../../communication/messages";
 
 export const gameSlice = createSlice({
   name: "game",
@@ -40,13 +41,14 @@ export async function tryToJoinGame(dispatch) {
 
   console.debug("Trying to join game", gameId, "on host", hostId);
 
-  const game = await ask({
-    connectionId: hostId,
-    dispatch,
-    requestBody: { type: "JOIN_GAME", payload: gameId },
-  });
-
-  dispatch(inGame(game));
+  dispatch(
+    sendMessage(
+      buildRequest({
+        to: hostId,
+        payload: { type: "JOIN_GAME", payload: gameId },
+      })
+    )
+  );
 }
 
 export const selectGame = (state) => state.game.game;
