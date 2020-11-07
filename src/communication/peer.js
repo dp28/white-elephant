@@ -6,7 +6,11 @@ const Peer = createPeer();
 export const getPeer = () => Peer;
 
 function createPeer() {
-  const peer = new PeerJSPeer(fetchId());
+  const peer = new PeerJSPeer(fetchId(), {
+    host: "localhost",
+    port: 9000,
+    secure: false,
+  });
   return new Promise((resolve, reject) => {
     peer.on("error", (error) => {
       console.error("Failed to connect to PeerJS server", error);

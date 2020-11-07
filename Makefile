@@ -13,6 +13,9 @@ test: node_modules
 start: node_modules
 	REACT_APP_ENVIRONMENT=$(ENVIRONMENT) HTTPS=true yarn start
 
+start_dev_server: node_modules
+	REACT_APP_ENVIRONMENT=local npx peerjs --port 9000
+
 build: node_modules
 	REACT_APP_ENVIRONMENT=$(ENVIRONMENT) yarn build
 
