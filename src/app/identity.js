@@ -1,4 +1,5 @@
 import generateId from "cuid";
+import { storeData, loadData } from "./persistentStorage";
 
 const ID_KEY = "__identity";
 
@@ -9,12 +10,12 @@ export function fetchId() {
     return id;
   }
 
-  const storedId = localStorage.getItem(ID_KEY);
+  const storedId = loadData(ID_KEY);
   if (storedId) {
     return storedId;
   }
 
   const newId = generateId();
-  localStorage.setItem(ID_KEY, newId);
+  storeData(ID_KEY, newId);
   return newId;
 }
