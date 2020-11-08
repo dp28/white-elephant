@@ -16,18 +16,31 @@ export const imagesSlice = createSlice({
 
 export const { storeImage } = imagesSlice.actions;
 
-export const receiveImage = (image) => (dispatch) => {
-  const { id, fileName, fileType, caption, data } = image;
+export const STORE_IMAGE = "images/storeImage";
+
+export const toRTCStoreImage = async (storeImageAction) => {
+  const { id, fileName, fileType, caption, url } = storeImageAction.payload;
+  const data = await fetch(url).then((r) => r.blob());
+  const payload = {
+    id,
+    fileName,
+    fileType,
+    caption,
+    data,
+  };
+  return { ...storeImageAction, payload };
+};
+
+export const toReduxStoreImageAction = (storeImageAction) => {
+  const { id, fileName, fileType, caption, data } = storeImageAction.payload;
   const blob = new Blob([data], { type: fileType });
-  dispatch(
-    storeImage({
-      id,
-      fileName,
-      fileType,
-      caption,
-      url: URL.createObjectURL(blob),
-    })
-  );
+  return storeImage({
+    id,
+    fileName,
+    fileType,
+    caption,
+    url: URL.createObjectURL(blob),
+  });
 };
 
 export const createImage = ({ files, caption }) => {

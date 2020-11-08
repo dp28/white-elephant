@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectImages, createImage, storeImage } from "./imagesSlice";
-import { broadcastImage } from "../../app/peer";
+import { buildBroadcast } from "../../communication/messages";
+import { broadcastMessage } from "../messages/messagesSlice";
 
 export function Images() {
   const images = useSelector(selectImages);
@@ -9,8 +10,9 @@ export function Images() {
 
   const onSubmit = (event) => {
     event.preventDefault();
-    dispatch(storeImage(image));
-    broadcastImage(image);
+    const storeAction = storeImage(image);
+    dispatch(storeAction);
+    dispatch(broadcastMessage(buildBroadcast({ payload: storeAction })));
     setCaption("");
   };
 

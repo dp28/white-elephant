@@ -6,7 +6,7 @@ export const REQUEST = "REQUEST";
 export const RESPONSE = "RESPONSE";
 export const BROADCAST = "BROADCAST";
 
-export function buildMessage({ type, to, payload }) {
+export function buildMessage({ type, to, payload, containsAction = true }) {
   return {
     id: cuid(),
     createdAt: new Date().toISOString(),
@@ -14,16 +14,22 @@ export function buildMessage({ type, to, payload }) {
     from: fetchId(),
     to,
     payload,
+    containsAction,
   };
 }
 
-export const buildRequest = ({ to, payload }) =>
-  buildMessage({ type: REQUEST, to, payload });
+export const buildRequest = ({ to, payload, containsAction = true }) =>
+  buildMessage({ type: REQUEST, to, payload, containsAction });
 
-export const buildResponse = ({ request, payload }) => ({
-  ...buildMessage({ type: RESPONSE, to: request.from, payload }),
+export const buildResponse = ({ request, payload, containsAction = true }) => ({
+  ...buildMessage({
+    type: RESPONSE,
+    to: request.from,
+    payload,
+    containsAction,
+  }),
   replyingTo: request.id,
 });
 
-export const buildBroadcast = ({ payload }) =>
-  buildMessage({ type: BROADCAST, payload });
+export const buildBroadcast = ({ payload, containsAction = true }) =>
+  buildMessage({ type: BROADCAST, payload, containsAction });
