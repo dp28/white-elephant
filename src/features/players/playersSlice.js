@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchId } from "../../app/identity";
-import { InitialUsername } from "../username/usernameSlice";
+import { loadData } from "../../app/persistentStorage";
 
 export const playersSlice = createSlice({
   name: "players",
@@ -8,7 +8,7 @@ export const playersSlice = createSlice({
     playersById: {
       [fetchId()]: {
         id: fetchId(),
-        name: InitialUsername,
+        name: loadData("USERNAME") || null,
         connectionId: fetchId(),
         isSelf: true,
       },
