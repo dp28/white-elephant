@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export const CONNECTING = "CONNECTING";
 export const CONNECTED = "CONNECTED";
-export const DISCONECTED = "DISCONECTED";
+export const DISCONNECTED = "DISCONNECTED";
 
 export const connectionsSlice = createSlice({
   name: "connections",
@@ -28,7 +28,7 @@ export const connectionsSlice = createSlice({
       setConnectionStatus({
         state,
         connectionId: action.payload.id,
-        status: DISCONECTED,
+        status: DISCONNECTED,
         error: action.payload.error,
       });
     },
@@ -36,7 +36,7 @@ export const connectionsSlice = createSlice({
       setConnectionStatus({
         state,
         connectionId: action.payload.id,
-        status: DISCONECTED,
+        status: DISCONNECTED,
       });
     },
   },
@@ -52,12 +52,15 @@ export const {
 export const selectConnections = (state) =>
   Object.values(state.connections.connectionsById);
 
+export const selectConnectionMap = (state) => state.connections.connectionsById;
+
 export const selectConnection = (id) => (state) =>
   state.connections.connectionsById[id];
 
 export const isConnecting = (connection) => connection.status === CONNECTING;
 export const isConnected = (connection) => connection.status === CONNECTED;
-export const isDisconnected = (connection) => connection.status === DISCONECTED;
+export const isDisconnected = (connection) =>
+  connection.status === DISCONNECTED;
 
 export default connectionsSlice.reducer;
 

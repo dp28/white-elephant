@@ -11,7 +11,7 @@ export const gameSlice = createSlice({
   },
   reducers: {
     inGame: (state, action) => {
-      state.game = action.game;
+      state.game = action.payload;
     },
   },
 });
@@ -23,6 +23,8 @@ export const startGame = ({ hostId, name }) => (dispatch) => {
   setURLSearchParams({ hostId, gameId: game.id });
   dispatch(inGame(game));
 };
+
+export const JOIN_GAME = "JOIN_GAME";
 
 export async function tryToJoinGame(dispatch) {
   const queryParams = new URLSearchParams(window.location.search);
@@ -45,7 +47,7 @@ export async function tryToJoinGame(dispatch) {
     sendMessage(
       buildRequest({
         to: hostId,
-        payload: { type: "JOIN_GAME", payload: gameId },
+        payload: { type: JOIN_GAME, payload: gameId },
       })
     )
   );

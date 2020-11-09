@@ -4,6 +4,7 @@ import images from "../features/images/imagesSlice";
 import game from "../features/game/gameSlice";
 import messages from "../features/messages/messagesSlice";
 import username from "../features/username/usernameSlice";
+import players from "../features/players/playersSlice";
 import { communicationMiddleware } from "../communication/middleware";
 
 export default configureStore({
@@ -13,6 +14,7 @@ export default configureStore({
     game,
     messages,
     username,
+    players,
   },
   middleware: [communicationMiddleware].concat(getDefaultMiddleware()),
 });

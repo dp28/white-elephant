@@ -5,6 +5,7 @@ import { Images } from "./features/images/Images";
 import "./App.css";
 import { fetchId } from "./app/identity";
 import { Username } from "./features/username/Username";
+import { Players } from "./features/players/Players";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Username />
         <Game />
         <Connections />
+        <Players />
         <Images />
         <p>Client ID: {fetchId()}</p>
       </header>

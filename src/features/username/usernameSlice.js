@@ -3,10 +3,12 @@ import { storeData, loadData } from "../../app/persistentStorage";
 
 const USERNAME_KEY = "USERNAME";
 
+export const InitialUsername = loadData(USERNAME_KEY) || null;
+
 export const usernameSlice = createSlice({
   name: "username",
   initialState: {
-    username: loadData(USERNAME_KEY) || null,
+    username: InitialUsername,
   },
   reducers: {
     updateUsername: (state, action) => {

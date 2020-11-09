@@ -7,6 +7,8 @@ import {
   STORE_IMAGE,
   toReduxStoreImageAction,
 } from "../features/images/imagesSlice";
+import { JOIN_GAME, selectGame } from "../features/game/gameSlice";
+import { selectSelfPlayer, addPlayer } from "../features/players/playersSlice";
 
 export function listen({ connection, store }) {
   connection.on("data", (messageInRTCFormat) => {
@@ -35,7 +37,21 @@ function respond({ store, message, connection }) {
   connection.send(response);
 }
 
-const ResponderMap = {};
+const ResponderMap = {
+  [JOIN_GAME]: (state, request) => {
+    const game = selectGame(state);
+    if (game && game.id === request.payload) {
+      return addPlayer({ ...selectSelfPlayer(state), isSelf: false });
+    } else {
+      return {
+        type: "GAME_NOT_FOUND",
+        payload: {
+          gameId: request.payload,
+        },
+      };
+    }
+  },
+};
 
 const DefaultResponder = (_state, request) => ({
   type: "ERROR",
