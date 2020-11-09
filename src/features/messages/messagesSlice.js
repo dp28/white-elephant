@@ -31,14 +31,14 @@ export const messagesSlice = createSlice({
   },
 });
 
-export const SEND_MESSAGE = "messages/sendMessage";
-export const BROADCAST_MESSAGE = "messages/broadcastMessage";
-
 export const {
   sendMessage,
   receiveMessage,
   broadcastMessage,
 } = messagesSlice.actions;
+
+export const SEND_MESSAGE = sendMessage.toString();
+export const BROADCAST_MESSAGE = broadcastMessage.toString();
 
 export const selectWaitingCount = (state) =>
   Object.keys(state.messages.waitingForResponse).length;
