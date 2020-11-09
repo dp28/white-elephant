@@ -1,29 +1,43 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+export const CONNECTING = "CONNECTING";
+export const CONNECTED = "CONNECTED";
+export const DISCONECTED = "DISCONECTED";
+
 export const connectionsSlice = createSlice({
   name: "connections",
   initialState: {
-    connectingTo: [],
     connectionsById: {},
-    failedConnectionsById: {},
   },
   reducers: {
     startConnecting: (state, action) => {
-      const id = action.payload;
-      if (!state.connectionsById[id] && state.connectingTo.indexOf(id) < 0) {
-        state.connectingTo.push(id);
-      }
+      setConnectionStatus({
+        state,
+        connectionId: action.payload,
+        status: CONNECTING,
+      });
     },
     addConnection: (state, action) => {
-      delete state.failedConnectionsById[action.payload.id];
-      remove(state.connectingTo, action.payload.id);
-      state.connectionsById[action.payload.id] = action.payload.connection;
+      setConnectionStatus({
+        state,
+        connectionId: action.payload.id,
+        status: CONNECTED,
+      });
     },
     logConnectionError: (state, action) => {
-      state.failedConnectionsById[action.payload.id] = action.payload.error;
+      setConnectionStatus({
+        state,
+        connectionId: action.payload.id,
+        status: DISCONECTED,
+        error: action.payload.error,
+      });
     },
     disconnect: (state, action) => {
-      delete state.connectionsById[action.payload.id];
+      setConnectionStatus({
+        state,
+        connectionId: action.payload.id,
+        status: DISCONECTED,
+      });
     },
   },
 });
@@ -35,20 +49,32 @@ export const {
   disconnect,
 } = connectionsSlice.actions;
 
-export const selectConnectingCount = (state) =>
-  state.connections.connectingTo.length;
+export const selectConnections = (state) =>
+  Object.values(state.connections.connectionsById);
 
-export const selectConnectionCount = (state) =>
-  Object.keys(state.connections.connectionsById).length;
+export const selectConnection = (id) => (state) =>
+  state.connections.connectionsById[id];
 
-export const selectConnectionErrors = (state) =>
-  Object.values(state.connections.failedConnectionsById);
+export const isConnecting = (connection) => connection.status === CONNECTING;
+export const isConnected = (connection) => connection.status === CONNECTED;
+export const isDisconnected = (connection) => connection.status === DISCONECTED;
 
 export default connectionsSlice.reducer;
 
-function remove(array, value) {
-  const index = array.indexOf(value);
-  if (index > -1) {
-    array.splice(index, 1);
+function setConnectionStatus({
+  state,
+  connectionId,
+  status,
+  error = undefined,
+}) {
+  const connection = fetchConnection(state, connectionId);
+  connection.status = status;
+  connection.error = error;
+}
+
+function fetchConnection(state, id) {
+  if (!state.connectionsById[id]) {
+    state.connectionsById[id] = { id };
   }
+  return state.connectionsById[id];
 }

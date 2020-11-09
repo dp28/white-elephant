@@ -9,7 +9,6 @@ import {
 } from "../features/images/imagesSlice";
 
 export function listen({ connection, store }) {
-  console.log("CALLED LISTEN");
   connection.on("data", (messageInRTCFormat) => {
     console.debug("Message received", messageInRTCFormat);
     const message = toReduxFormat(messageInRTCFormat);

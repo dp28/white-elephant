@@ -1,15 +1,16 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import {
-  selectConnectingCount,
-  selectConnectionCount,
-  selectConnectionErrors,
+  selectConnections,
+  isConnected,
+  isConnecting,
 } from "./connectionsSlice";
 
 export function Connections() {
-  const connectingCount = useSelector(selectConnectingCount);
-  const connectionCount = useSelector(selectConnectionCount);
-  const errors = useSelector(selectConnectionErrors);
+  const connections = useSelector(selectConnections);
+  const errors = connections.map(({ error }) => error).filter(Boolean);
+  const connectionCount = connections.filter(isConnected).length;
+  const connectingCount = connections.filter(isConnecting).length;
 
   return (
     <div>
