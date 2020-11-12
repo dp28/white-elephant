@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchId } from "../../app/identity";
 import { loadData } from "../../app/persistentStorage";
+import { gameReducers } from "../game/gameActions";
 
 export const playersSlice = createSlice({
   name: "players",
@@ -14,7 +15,7 @@ export const playersSlice = createSlice({
       },
     },
   },
-  reducers: {
+  reducers: gameReducers({
     addPlayer: (state, action) => {
       state.playersById[action.payload.id] = {
         id: action.payload.id,
@@ -41,7 +42,7 @@ export const playersSlice = createSlice({
         player.connected = false;
       }
     },
-  },
+  }),
   extraReducers: (builder) => {
     builder.addCase("game/setGameState", (state, action) => {
       const selfPlayer = state.playersById[fetchId()];

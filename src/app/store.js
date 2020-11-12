@@ -6,6 +6,7 @@ import messages from "../features/messages/messagesSlice";
 import username from "../features/username/usernameSlice";
 import players from "../features/players/playersSlice";
 import { communicationMiddleware } from "../communication/middleware";
+import { gameMiddleware } from "../features/game/gameMiddleware";
 
 export default configureStore({
   reducer: {
@@ -16,5 +17,7 @@ export default configureStore({
     username,
     players,
   },
-  middleware: [communicationMiddleware].concat(getDefaultMiddleware()),
+  middleware: [communicationMiddleware, gameMiddleware].concat(
+    getDefaultMiddleware()
+  ),
 });

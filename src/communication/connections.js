@@ -7,7 +7,6 @@ import {
   startConnecting,
 } from "../features/connections/connectionsSlice";
 import {
-  addPlayer,
   playerConnected,
   playerDisconnected,
 } from "../features/players/playersSlice";
