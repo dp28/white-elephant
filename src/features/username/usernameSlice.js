@@ -1,7 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { storeData, loadData } from "../../app/persistentStorage";
-import { broadcastMessage } from "../messages/messagesSlice";
-import { buildBroadcast } from "../../communication/messages";
 import { updatePlayerName } from "../players/playersSlice";
 import { fetchId } from "../../app/identity";
 
@@ -22,18 +20,11 @@ export const usernameSlice = createSlice({
 export const updateUsername = (username) => (dispatch) => {
   storeData(USERNAME_KEY, username);
   dispatch(usernameSlice.actions.updateUsername(username));
-
-  const updateCurrentPlayerName = updatePlayerName({
-    playerId: fetchId(),
-    name: username,
-  });
-  dispatch(updateCurrentPlayerName);
   dispatch(
-    broadcastMessage(
-      buildBroadcast({
-        payload: updateCurrentPlayerName,
-      })
-    )
+    updatePlayerName({
+      playerId: fetchId(),
+      name: username,
+    })
   );
 };
 

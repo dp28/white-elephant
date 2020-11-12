@@ -2,6 +2,7 @@ import { buildConnections } from "./connections";
 import {
   SEND_MESSAGE,
   BROADCAST_MESSAGE,
+  RELAY_MESSAGE,
 } from "../features/messages/messagesSlice";
 import { STORE_IMAGE, toRTCStoreImage } from "../features/images/imagesSlice";
 
@@ -9,7 +10,11 @@ export const communicationMiddleware = (store) => {
   const connectionsPromise = buildConnections(store);
 
   return (next) => async (action) => {
-    if (action.type === SEND_MESSAGE || action.type === BROADCAST_MESSAGE) {
+    if (
+      action.type === RELAY_MESSAGE ||
+      action.type === SEND_MESSAGE ||
+      action.type === BROADCAST_MESSAGE
+    ) {
       await sendMessage(action, connectionsPromise);
     }
     next(action);
@@ -19,10 +24,15 @@ export const communicationMiddleware = (store) => {
 async function sendMessage(action, connectionsPromise) {
   const message = await toRTCMessage(action.payload);
   const connections = await connectionsPromise;
-  if (action.type === BROADCAST_MESSAGE) {
-    connections.broadcast(message);
-  } else {
-    connections.send(action.payload.to, message);
+  switch (action.type) {
+    case RELAY_MESSAGE:
+      connections.relay(message);
+      break;
+    case BROADCAST_MESSAGE:
+      connections.broadcast(message);
+      break;
+    default:
+      connections.send(action.payload.to, message);
   }
 }
 

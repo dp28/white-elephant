@@ -20,6 +20,9 @@ export const messagesSlice = createSlice({
     broadcastMessage: (state, action) => {
       state.sent.push(action.payload);
     },
+    relayMessage: (state, action) => {
+      state.sent.push(action.payload);
+    },
     receiveMessage: (state, action) => {
       const message = action.payload;
       state.received.push(message);
@@ -35,10 +38,12 @@ export const {
   sendMessage,
   receiveMessage,
   broadcastMessage,
+  relayMessage,
 } = messagesSlice.actions;
 
 export const SEND_MESSAGE = sendMessage.toString();
 export const BROADCAST_MESSAGE = broadcastMessage.toString();
+export const RELAY_MESSAGE = relayMessage.toString();
 
 export const selectWaitingCount = (state) =>
   Object.keys(state.messages.waitingForResponse).length;

@@ -6,10 +6,7 @@ import {
   disconnect,
   startConnecting,
 } from "../features/connections/connectionsSlice";
-import {
-  playerConnected,
-  playerDisconnected,
-} from "../features/players/playersSlice";
+import { playerDisconnected } from "../features/players/playersSlice";
 import { fetchId } from "../app/identity";
 import { selectUsername } from "../features/username/usernameSlice";
 
@@ -24,7 +21,6 @@ export async function buildConnections(store) {
     connection.on("open", () => {
       console.debug("Connected to", connectionId);
       store.dispatch(addConnection({ id: connectionId }));
-      store.dispatch(playerConnected({ playerId: connectionId }));
     });
 
     connection.on("error", (error) => {
@@ -56,15 +52,18 @@ export async function buildConnections(store) {
       metadata: { id: fetchId(), name: selectUsername(store.getState()) },
       reliable: true,
     });
-    startListening({ connection, connectionId: id });
 
-    return new Promise((resolve, reject) => {
+    const result = new Promise((resolve, reject) => {
       connection.on("open", () => {
         resolve(connection);
       });
 
       connection.on("error", reject);
     });
+
+    startListening({ connection, connectionId: id });
+
+    return result;
   };
 
   const send = async (id, message) => {
@@ -80,6 +79,16 @@ export async function buildConnections(store) {
     });
   };
 
+  const relay = (message) => {
+    const connectionIds = Object.keys(connections).filter(
+      (id) => id !== message.except
+    );
+    console.debug("Relaying", message, "to", connectionIds);
+    connectionIds.forEach((connectionId) => {
+      send(connectionId, message);
+    });
+  };
+
   peer.on("connection", (connection) => {
     const id = connection.metadata.id;
     startListening({ connection, connectionId: id });
@@ -91,5 +100,6 @@ export async function buildConnections(store) {
     send,
     broadcast,
     connect,
+    relay,
   };
 }

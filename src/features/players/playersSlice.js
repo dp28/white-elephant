@@ -30,12 +30,6 @@ export const playersSlice = createSlice({
         player.name = action.payload.name;
       }
     },
-    playerConnected: (state, action) => {
-      const player = state.playersById[action.payload.playerId];
-      if (player) {
-        player.connected = true;
-      }
-    },
     playerDisconnected: (state, action) => {
       const player = state.playersById[action.payload.playerId];
       if (player) {
@@ -55,7 +49,6 @@ export const playersSlice = createSlice({
 export const {
   addPlayer,
   updatePlayerName,
-  playerConnected,
   playerDisconnected,
 } = playersSlice.actions;
 

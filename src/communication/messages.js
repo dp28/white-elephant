@@ -5,6 +5,7 @@ export const MESSAGE = "MESSAGE";
 export const REQUEST = "REQUEST";
 export const RESPONSE = "RESPONSE";
 export const BROADCAST = "BROADCAST";
+export const RELAY = "RELAY";
 
 export function buildMessage({ type, to, payload, containsAction = true }) {
   return {
@@ -33,3 +34,8 @@ export const buildResponse = ({ request, payload, containsAction = true }) => ({
 
 export const buildBroadcast = ({ payload, containsAction = true }) =>
   buildMessage({ type: BROADCAST, payload, containsAction });
+
+export const buildRelay = ({ payload, containsAction = true, except }) => ({
+  ...buildMessage({ type: RELAY, payload, containsAction }),
+  except,
+});
