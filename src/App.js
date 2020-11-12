@@ -1,5 +1,6 @@
 import React from "react";
 import Container from "@material-ui/core/Container";
+import { makeStyles } from "@material-ui/core/styles";
 import { Game } from "./features/game/Game";
 import { Connections } from "./features/connections/Connections";
 import { Images } from "./features/images/Images";
@@ -7,7 +8,15 @@ import { fetchId } from "./app/identity";
 import { Username } from "./features/username/Username";
 import { useSelector } from "react-redux";
 import { selectUsername } from "./features/username/usernameSlice";
-import "./App.css";
+
+const useStyles = makeStyles((theme) => ({
+  app: {
+    height: "100%",
+  },
+  container: {
+    height: "100%",
+  },
+}));
 
 function Debug() {
   return (
@@ -20,10 +29,13 @@ function Debug() {
 }
 
 function App() {
+  const classes = useStyles();
   const username = useSelector(selectUsername);
   return (
-    <div className="App">
-      <Container>{username ? <Game /> : <Username />}</Container>
+    <div className={classes.app}>
+      <Container className={classes.container}>
+        {username ? <Game /> : <Username />}
+      </Container>
     </div>
   );
 }
