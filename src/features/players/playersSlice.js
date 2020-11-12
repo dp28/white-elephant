@@ -10,7 +10,6 @@ export const playersSlice = createSlice({
         id: fetchId(),
         name: loadData("USERNAME") || null,
         connectionId: fetchId(),
-        isSelf: true,
       },
     },
   },
@@ -20,7 +19,6 @@ export const playersSlice = createSlice({
         id: action.payload.id,
         name: action.payload.name,
         connectionId: action.payload.connectionId,
-        isSelf: action.payload.connectionId === fetchId(),
       };
     },
     updatePlayerName: (state, action) => {

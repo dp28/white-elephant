@@ -41,7 +41,7 @@ const ResponderMap = {
   [JOIN_GAME]: (state, request) => {
     const game = selectGame(state);
     if (game && game.id === request.payload) {
-      return addPlayer({ ...selectSelfPlayer(state), isSelf: false });
+      return addPlayer(selectSelfPlayer(state));
     } else {
       return {
         type: "GAME_NOT_FOUND",
