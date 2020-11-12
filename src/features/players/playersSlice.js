@@ -10,6 +10,7 @@ export const playersSlice = createSlice({
         id: fetchId(),
         name: loadData("USERNAME") || null,
         connectionId: fetchId(),
+        connected: true,
       },
     },
   },
@@ -19,6 +20,7 @@ export const playersSlice = createSlice({
         id: action.payload.id,
         name: action.payload.name,
         connectionId: action.payload.connectionId,
+        connected: action.payload.connected,
       };
     },
     updatePlayerName: (state, action) => {
@@ -27,13 +29,39 @@ export const playersSlice = createSlice({
         player.name = action.payload.name;
       }
     },
+    playerConnected: (state, action) => {
+      const player = state.playersById[action.payload.playerId];
+      if (player) {
+        player.connected = true;
+      }
+    },
+    playerDisconnected: (state, action) => {
+      const player = state.playersById[action.payload.playerId];
+      if (player) {
+        player.connected = false;
+      }
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase("game/setGameState", (state, action) => {
+      const selfPlayer = state.playersById[fetchId()];
+      const { playersById } = action.payload;
+      state.playersById = { ...playersById, [selfPlayer.id]: selfPlayer };
+    });
   },
 });
 
-export const { addPlayer, updatePlayerName } = playersSlice.actions;
+export const {
+  addPlayer,
+  updatePlayerName,
+  playerConnected,
+  playerDisconnected,
+} = playersSlice.actions;
 
 export const selectPlayers = (state) =>
   Object.values(state.players.playersById);
+
+export const selectPlayersById = (state) => state.players.playersById;
 
 export const selectSelfPlayer = (state) => state.players.playersById[fetchId()];
 

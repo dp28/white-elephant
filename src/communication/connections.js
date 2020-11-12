@@ -6,7 +6,11 @@ import {
   disconnect,
   startConnecting,
 } from "../features/connections/connectionsSlice";
-import { addPlayer } from "../features/players/playersSlice";
+import {
+  addPlayer,
+  playerConnected,
+  playerDisconnected,
+} from "../features/players/playersSlice";
 import { fetchId } from "../app/identity";
 import { selectUsername } from "../features/username/usernameSlice";
 
@@ -17,6 +21,26 @@ export async function buildConnections(store) {
   const startListening = ({ connection, connectionId }) => {
     connections[connectionId] = connection;
     listen({ connection, store });
+
+    connection.on("open", () => {
+      console.debug("Connected to", connectionId);
+      store.dispatch(addConnection({ id: connectionId }));
+      store.dispatch(playerConnected({ playerId: connectionId }));
+    });
+
+    connection.on("error", (error) => {
+      console.error("Failed to connect", error);
+      delete connections[connectionId];
+      store.dispatch(logConnectionError({ id: connectionId }));
+      store.dispatch(playerDisconnected({ playerId: connectionId }));
+    });
+
+    connection.on("close", () => {
+      console.debug("Closed", connectionId);
+      delete connections[connectionId];
+      store.dispatch(disconnect({ id: connectionId }));
+      store.dispatch(playerDisconnected({ playerId: connectionId }));
+    });
   };
 
   const connect = (id) => {
@@ -37,23 +61,10 @@ export async function buildConnections(store) {
 
     return new Promise((resolve, reject) => {
       connection.on("open", () => {
-        console.debug("Connected to", id);
-        store.dispatch(addConnection({ id }));
         resolve(connection);
       });
 
-      connection.on("error", (error) => {
-        console.error("Failed to connect", error);
-        delete connections[id];
-        store.dispatch(logConnectionError({ id }));
-        reject(error);
-      });
-
-      connection.on("close", () => {
-        console.debug("Closed", id);
-        delete connections[id];
-        store.dispatch(disconnect({ id }));
-      });
+      connection.on("error", reject);
     });
   };
 
@@ -75,10 +86,6 @@ export async function buildConnections(store) {
     startListening({ connection, connectionId: id });
 
     store.dispatch(addConnection({ id, incoming: true }));
-
-    store.dispatch(
-      addPlayer({ id, connectionId: id, name: connection.metadata.name })
-    );
   });
 
   return {

@@ -16,9 +16,7 @@ ReactDOM.render(
   document.getElementById("root")
 );
 
-const dispatch = (action) => store.dispatch(action);
-
-tryToJoinGame(dispatch);
+tryToJoinGame(store);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

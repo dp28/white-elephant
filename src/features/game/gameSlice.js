@@ -3,6 +3,7 @@ import cuid from "cuid";
 import { fetchId } from "../../app/identity";
 import { sendMessage } from "../messages/messagesSlice";
 import { buildRequest } from "../../communication/messages";
+import { selectUsername } from "../username/usernameSlice";
 
 export const gameSlice = createSlice({
   name: "game",
@@ -13,10 +14,13 @@ export const gameSlice = createSlice({
     inGame: (state, action) => {
       state.game = action.payload;
     },
+    setGameState: (state, action) => {
+      state.game = action.payload.game;
+    },
   },
 });
 
-export const { inGame } = gameSlice.actions;
+export const { inGame, setGameState } = gameSlice.actions;
 
 export const startGame = ({ hostId, name }) => (dispatch) => {
   const game = { id: cuid(), hostId, name };
@@ -26,7 +30,7 @@ export const startGame = ({ hostId, name }) => (dispatch) => {
 
 export const JOIN_GAME = "JOIN_GAME";
 
-export async function tryToJoinGame(dispatch) {
+export async function tryToJoinGame(store) {
   const queryParams = new URLSearchParams(window.location.search);
   const hostId = queryParams.get("hostId");
   const gameId = queryParams.get("gameId");
@@ -43,11 +47,19 @@ export async function tryToJoinGame(dispatch) {
 
   console.debug("Trying to join game", gameId, "on host", hostId);
 
-  dispatch(
+  const username = selectUsername(store.getState());
+
+  store.dispatch(
     sendMessage(
       buildRequest({
         to: hostId,
-        payload: { type: JOIN_GAME, payload: gameId },
+        payload: {
+          type: JOIN_GAME,
+          payload: {
+            gameId,
+            player: { name: username, id: fetchId(), connectionId: fetchId() },
+          },
+        },
       })
     )
   );
