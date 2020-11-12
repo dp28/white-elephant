@@ -6,6 +6,7 @@ import store from "./app/store";
 import { Provider } from "react-redux";
 import * as serviceWorker from "./serviceWorker";
 import { tryToJoinGame } from "./features/game/gameSlice";
+import "fontsource-roboto";
 
 ReactDOM.render(
   <React.StrictMode>

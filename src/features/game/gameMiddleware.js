@@ -10,9 +10,10 @@ export const gameMiddleware = (store) => {
   return (next) => (action) => {
     next(action);
 
-    const hostId = selectGame(store.getState())?.hostId;
+    const game = selectGame(store.getState());
+    const hostId = game?.hostId;
 
-    if (isGameAction(action)) {
+    if (isGameAction(action) && game) {
       if (selfId === hostId) {
         console.debug("Forwarding game action to all players", action);
         store.dispatch(

@@ -44,8 +44,6 @@ export function Images() {
         <input type="submit" value="Upload" />
       </form>
 
-      <hr />
-
       {images.map((image) => (
         <img
           src={image.url}
