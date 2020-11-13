@@ -6,15 +6,29 @@ import {
   disconnect,
   startConnecting,
 } from "../features/connections/connectionsSlice";
-import { playerDisconnected } from "../features/players/playersSlice";
+import {
+  playerDisconnected,
+  hostDisconnected,
+} from "../features/players/playersSlice";
 import { fetchId } from "../app/identity";
 import { selectUsername } from "../features/username/usernameSlice";
+import { selectGame } from "../features/game/gameSlice";
 
 export async function buildConnections(store) {
   const peer = await getPeer();
   const connections = {};
 
+  const dispatchPlayerDisconnected = (connectionId) => {
+    const hostId = selectGame(store.getState())?.hostId;
+    if (hostId === fetchId()) {
+      store.dispatch(playerDisconnected({ playerId: connectionId }));
+    } else if (hostId === connectionId) {
+      store.dispatch(hostDisconnected({ playerId: connectionId }));
+    }
+  };
+
   const startListening = ({ connection, connectionId }) => {
+    console.debug("adding connection", connectionId);
     connections[connectionId] = connection;
     listen({ connection, store });
 
@@ -27,14 +41,14 @@ export async function buildConnections(store) {
       console.error("Failed to connect", error);
       delete connections[connectionId];
       store.dispatch(logConnectionError({ id: connectionId }));
-      store.dispatch(playerDisconnected({ playerId: connectionId }));
+      dispatchPlayerDisconnected(connectionId);
     });
 
     connection.on("close", () => {
       console.debug("Closed", connectionId);
       delete connections[connectionId];
       store.dispatch(disconnect({ id: connectionId }));
-      store.dispatch(playerDisconnected({ playerId: connectionId }));
+      dispatchPlayerDisconnected(connectionId);
     });
   };
 
@@ -44,6 +58,10 @@ export async function buildConnections(store) {
     if (connections[id]) {
       console.debug("Already connected to", id);
       return Promise.resolve(connections[id]);
+    }
+
+    if (id === fetchId()) {
+      return Promise.reject(new Error("Can't connect to self"));
     }
 
     store.dispatch(startConnecting(id));

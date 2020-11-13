@@ -42,7 +42,6 @@ function respond({ store, message, connection }) {
     payload: responsePayload,
   });
   store.dispatch(sendMessage(response));
-  connection.send(response);
 
   if (action) {
     store.dispatch(action);

@@ -70,6 +70,12 @@ export const stopJoiningGame = () => (dispatch) => {
 export const requestGameToJoin = () => (dispatch) => {
   const { hostId, gameId } = loadGameDataFromURL();
 
+  if (!gameId || !hostId) {
+    console.debug("No game to join found in URL");
+    dispatch(stopJoiningGame());
+    return;
+  }
+
   if (hostId === fetchId()) {
     console.debug("Can't currently join self-hosted games");
     dispatch(stopJoiningGame());
