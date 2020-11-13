@@ -30,14 +30,7 @@ export function Player({ player }) {
   return (
     <Card className={classes.player}>
       <Typography className={classes.name}>{player.name}</Typography>{" "}
-      {isHost && (
-        <Chip
-          className={classes.host}
-          size="small"
-          label="Host"
-          color="warning.main"
-        />
-      )}
+      {isHost && <Chip className={classes.host} size="small" label="Host" />}
       {isSelf && <Chip size="small" label="You" color="primary" />}
       <ConnectionStatus player={player} />
     </Card>
