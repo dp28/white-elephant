@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
+import Alert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
-import { startGame } from "./gameSlice";
+import { startGame, selectGameToJoin } from "./gameSlice";
 import { fetchId } from "../../app/identity";
 
 const useStyles = makeStyles((theme) => ({
@@ -25,10 +26,16 @@ const useStyles = makeStyles((theme) => ({
   button: {
     margin: theme.spacing(1),
   },
+  alert: {
+    position: "absolute",
+    margin: "auto",
+    top: theme.spacing(1),
+  },
 }));
 
 export function NewGame() {
   const classes = useStyles();
+  const gameToJoin = useSelector(selectGameToJoin);
   const [name, setName] = useState("");
   const dispatch = useDispatch();
 
@@ -43,6 +50,15 @@ export function NewGame() {
   };
   return (
     <div className={classes.container}>
+      {gameToJoin.error && (
+        <Alert severity="error" className={classes.alert}>
+          <p>{gameToJoin.error}</p>
+          <p>
+            Unfortunately this game can't be loaded right now. Either ask the
+            game host for a new link, or try creating a game yourself!
+          </p>
+        </Alert>
+      )}
       <form className={classes.form} onSubmit={onSubmit}>
         <FormControl fullWidth={true}>
           <TextField

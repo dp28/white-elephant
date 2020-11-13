@@ -9,10 +9,14 @@ import {
 } from "../features/images/imagesSlice";
 import {
   JOIN_GAME,
+  REQUEST_GAME_TO_JOIN,
   selectGame,
   setGameState,
+  setGameToJoin,
+  gameNotFound,
 } from "../features/game/gameSlice";
 import { selectPlayersById, addPlayer } from "../features/players/playersSlice";
+import { selectUsername } from "../features/username/usernameSlice";
 
 export function listen({ connection, store }) {
   connection.on("data", (messageInRTCFormat) => {
@@ -46,6 +50,20 @@ function respond({ store, message, connection }) {
 }
 
 const ResponderMap = {
+  [REQUEST_GAME_TO_JOIN]: (state, request) => {
+    const game = selectGame(state);
+    const username = selectUsername(state);
+    const { gameId } = request.payload;
+    if (game && game.id === gameId) {
+      return {
+        responsePayload: setGameToJoin({
+          game: { ...game, hostName: username },
+        }),
+      };
+    } else {
+      return { responsePayload: gameNotFound(gameId) };
+    }
+  },
   [JOIN_GAME]: (state, request) => {
     const game = selectGame(state);
     const { gameId, player } = request.payload;
@@ -57,12 +75,7 @@ const ResponderMap = {
       };
     } else {
       return {
-        responsePayload: {
-          type: "GAME_NOT_FOUND",
-          payload: {
-            gameId: request.payload,
-          },
-        },
+        responsePayload: gameNotFound(gameId),
       };
     }
   },

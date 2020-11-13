@@ -5,6 +5,7 @@ import FormControl from "@material-ui/core/FormControl";
 import { makeStyles } from "@material-ui/core/styles";
 import { useSelector, useDispatch } from "react-redux";
 import { selectUsername, updateUsername } from "./usernameSlice";
+import { Typography } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -29,54 +30,43 @@ const useStyles = makeStyles((theme) => ({
 export function Username() {
   const classes = useStyles();
   const savedUsername = useSelector(selectUsername) || "";
-  const [editing, setEditing] = useState(savedUsername === "");
   const [username, setUsername] = useState(savedUsername);
   const dispatch = useDispatch();
 
-  const startEditing = (event) => {
-    event.preventDefault();
-    setEditing(true);
-  };
+  const editing = username !== savedUsername;
 
   const onSubmit = (event) => {
     event.preventDefault();
-    dispatch(updateUsername(username));
-    setEditing(false);
+    if (editing) {
+      dispatch(updateUsername(username));
+    }
   };
 
-  if (editing) {
-    return (
-      <div className={classes.container}>
-        <form className={classes.form} onSubmit={onSubmit}>
-          <FormControl fullWidth={true}>
-            <TextField
-              label="Username"
-              className={classes.textField}
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
-              margin="normal"
-              required={true}
-            />
-          </FormControl>
-          <FormControl fullWidth={false}>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.button}
-              onClick={onSubmit}
-            >
-              Set username
-            </Button>
-          </FormControl>
-        </form>
-      </div>
-    );
-  } else {
-    return (
-      <div>
-        Username: {username}
-        <button onClick={startEditing}>Change</button>
-      </div>
-    );
-  }
+  return (
+    <div className={classes.container}>
+      <form className={classes.form} onSubmit={onSubmit}>
+        <FormControl fullWidth={true}>
+          <TextField
+            label="Player name"
+            className={classes.textField}
+            value={username}
+            onChange={(event) => setUsername(event.target.value)}
+            margin="normal"
+            required={true}
+          />
+        </FormControl>
+        <FormControl fullWidth={false}>
+          <Button
+            variant="contained"
+            disabled={!editing}
+            color={editing || !savedUsername ? "primary" : "default"}
+            className={classes.button}
+            onClick={onSubmit}
+          >
+            {savedUsername ? "Change name" : "Set name"}
+          </Button>
+        </FormControl>
+      </form>
+    </div>
+  );
 }
