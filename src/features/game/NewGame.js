@@ -74,6 +74,7 @@ export function NewGame() {
           <Button
             variant="contained"
             color="primary"
+            disabled={!name}
             className={classes.button}
             onClick={onSubmit}
           >
