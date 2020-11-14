@@ -3,6 +3,7 @@ import cuid from "cuid";
 import { fetchId } from "../../app/identity";
 import { sendMessage } from "../messages/messagesSlice";
 import { buildRequest } from "../../communication/messages";
+import { addPlayer } from "../players/playersSlice";
 
 export const gameSlice = createSlice({
   name: "game",
@@ -48,10 +49,11 @@ export const {
   gameNotFound,
 } = gameSlice.actions;
 
-export const startGame = ({ hostId, name }) => (dispatch) => {
-  const game = { id: cuid(), hostId, name };
-  setURLSearchParams({ hostId, gameId: game.id });
+export const startGame = ({ host, name }) => (dispatch) => {
+  const game = { id: cuid(), hostId: host.id, name };
+  setURLSearchParams({ hostId: host.id, gameId: game.id });
   dispatch(createGame(game));
+  dispatch(addPlayer({ ...host, connected: true }));
 };
 
 export const selectGame = (state) => state.game.game;

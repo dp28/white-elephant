@@ -45,14 +45,14 @@ export function NewGame() {
   const classes = useStyles();
   const gameToJoin = useSelector(selectGameToJoin);
   const [name, setName] = useState("");
-  const [newPlayer, setNewPlayer] = useState(null);
+  const [host, setHost] = useState(null);
   const dispatch = useDispatch();
 
   const onSubmit = (event) => {
     event.preventDefault();
     dispatch(
       startGame({
-        hostId: fetchId(),
+        host,
         name,
       })
     );
@@ -81,12 +81,12 @@ export function NewGame() {
               required={true}
             />
           </FormControl>
-          <BuildPlayer onPlayerChange={setNewPlayer} />
+          <BuildPlayer onPlayerChange={setHost} />
         </CardContent>
         <CardActions>
           <Button
             color="primary"
-            disabled={!name || !newPlayer}
+            disabled={!name || !host}
             className={classes.button}
             onClick={onSubmit}
           >
