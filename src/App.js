@@ -5,9 +5,6 @@ import { Game } from "./features/game/Game";
 import { Connections } from "./features/connections/Connections";
 import { Images } from "./features/images/Images";
 import { fetchId } from "./app/identity";
-import { Username } from "./features/username/Username";
-import { useSelector } from "react-redux";
-import { selectUsername } from "./features/username/usernameSlice";
 
 const useStyles = makeStyles((theme) => ({
   app: {
@@ -30,11 +27,10 @@ function Debug() {
 
 function App() {
   const classes = useStyles();
-  const username = useSelector(selectUsername);
   return (
     <div className={classes.app}>
       <Container className={classes.container}>
-        {username ? <Game /> : <Username />}
+        <Game />
       </Container>
     </div>
   );

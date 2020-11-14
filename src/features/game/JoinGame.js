@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import {
@@ -12,8 +12,7 @@ import {
   Button,
 } from "@material-ui/core";
 import { selectGameToJoin, stopJoiningGame, joinGame } from "./gameSlice";
-import { Username } from "../username/Username";
-import { selectUsername } from "../username/usernameSlice";
+import { BuildPlayer } from "../players/BuildPlayer";
 
 const useStyles = makeStyles((theme) => ({
   loadingContent: {
@@ -34,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
 export function JoinGame() {
   const classes = useStyles();
   const { game, loading } = useSelector(selectGameToJoin);
-  const username = useSelector(selectUsername);
+  const [player, setPlayer] = useState(null);
   const dispatch = useDispatch();
 
   if (loading) {
@@ -55,20 +54,18 @@ export function JoinGame() {
             subheader={`Hosted by ${game.hostName}`}
           />
           <CardContent>
-            <div className={classes.username}>
-              <Username />
-            </div>
+            <BuildPlayer onPlayerChange={setPlayer} />
           </CardContent>
           <CardActions>
             <Button onClick={() => dispatch(stopJoiningGame())}>Cancel</Button>
             <Button
               color="primary"
-              disabled={!username}
+              disabled={!player}
               onClick={(event) => {
                 event.preventDefault();
                 dispatch(
                   joinGame({
-                    username,
+                    username: player.name,
                     gameId: game.gameId,
                     hostId: game.hostId,
                   })
