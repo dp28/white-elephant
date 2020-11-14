@@ -45,27 +45,22 @@ export function Username() {
   return (
     <div className={classes.container}>
       <form className={classes.form} onSubmit={onSubmit}>
-        <FormControl fullWidth={true}>
-          <TextField
-            label="Player name"
-            className={classes.textField}
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
-            margin="normal"
-            required={true}
-          />
-        </FormControl>
-        <FormControl fullWidth={false}>
-          <Button
-            variant="contained"
-            disabled={!editing}
-            color={editing || !savedUsername ? "primary" : "default"}
-            className={classes.button}
-            onClick={onSubmit}
-          >
-            {savedUsername ? "Change name" : "Set name"}
-          </Button>
-        </FormControl>
+        <TextField
+          label="Player name"
+          className={classes.textField}
+          value={username}
+          onChange={(event) => setUsername(event.target.value)}
+          margin="normal"
+          required={true}
+        />
+        <Button
+          disabled={!editing}
+          color={editing || !savedUsername ? "primary" : "default"}
+          className={classes.button}
+          onClick={onSubmit}
+        >
+          {savedUsername ? "Change name" : "Set name"}
+        </Button>
       </form>
     </div>
   );

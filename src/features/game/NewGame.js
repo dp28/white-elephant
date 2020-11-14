@@ -7,6 +7,14 @@ import Alert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
 import { startGame, selectGameToJoin } from "./gameSlice";
 import { fetchId } from "../../app/identity";
+import {
+  Card,
+  CardContent,
+  CardActions,
+  CardHeader,
+  Typography,
+} from "@material-ui/core";
+import { BuildPlayer } from "../players/BuildPlayer";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -37,6 +45,7 @@ export function NewGame() {
   const classes = useStyles();
   const gameToJoin = useSelector(selectGameToJoin);
   const [name, setName] = useState("");
+  const [newPlayer, setNewPlayer] = useState(null);
   const dispatch = useDispatch();
 
   const onSubmit = (event) => {
@@ -59,29 +68,32 @@ export function NewGame() {
           </p>
         </Alert>
       )}
-      <form className={classes.form} onSubmit={onSubmit}>
-        <FormControl fullWidth={true}>
-          <TextField
-            label="Game name"
-            className={classes.textField}
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            margin="normal"
-            required={true}
-          />
-        </FormControl>
-        <FormControl fullWidth={false}>
+      <Card>
+        <CardHeader title="Create a new game" />
+        <CardContent>
+          <FormControl fullWidth={true}>
+            <TextField
+              label="Game name"
+              className={classes.textField}
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              margin="normal"
+              required={true}
+            />
+          </FormControl>
+          <BuildPlayer onPlayerChange={setNewPlayer} />
+        </CardContent>
+        <CardActions>
           <Button
-            variant="contained"
             color="primary"
-            disabled={!name}
+            disabled={!name || !newPlayer}
             className={classes.button}
             onClick={onSubmit}
           >
             Create game
           </Button>
-        </FormControl>
-      </form>
+        </CardActions>
+      </Card>
     </div>
   );
 }

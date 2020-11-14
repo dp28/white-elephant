@@ -66,7 +66,6 @@ export function JoinGame() {
               disabled={!username}
               onClick={(event) => {
                 event.preventDefault();
-                console.log("CLICK JOIN", game);
                 dispatch(
                   joinGame({
                     username,
