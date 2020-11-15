@@ -9,6 +9,7 @@ import {
   toRTCStoreImage,
   toRTCImage,
   asyncConvertImagesRTCFormat,
+  STORE_GIFT_IMAGE,
 } from "../features/images/imagesSlice";
 import { toRTCAddPlayer } from "../features/players/playersSlice";
 import { JOIN_GAME } from "../features/game/gameSlice";
@@ -55,6 +56,7 @@ async function toRTCMessage(message) {
 async function toRTCPayload(action) {
   switch (action.type) {
     case STORE_IMAGE:
+    case STORE_GIFT_IMAGE:
       return toRTCStoreImage(action);
     case "players/addPlayer":
       return toRTCAddPlayer(action);

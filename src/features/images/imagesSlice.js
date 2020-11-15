@@ -12,6 +12,10 @@ export const imagesSlice = createSlice({
       const { id, fileName, fileType, caption, url } = action.payload;
       state.imagesById[id] = { id, fileName, fileType, caption, url };
     },
+    storeGiftImage: gameAction((state, action) => {
+      const { id, fileName, fileType, caption, url } = action.payload;
+      state.imagesById[id] = { id, fileName, fileType, caption, url };
+    }),
   },
   extraReducers: (builder) => {
     builder.addCase("game/setGameState", (state, action) => {
@@ -22,9 +26,10 @@ export const imagesSlice = createSlice({
   },
 });
 
-export const { storeImage } = imagesSlice.actions;
+export const { storeImage, storeGiftImage } = imagesSlice.actions;
 
 export const STORE_IMAGE = "images/storeImage";
+export const STORE_GIFT_IMAGE = "images/storeGiftImage";
 
 export const toRTCStoreImage = async (storeImageAction) => {
   const image = await toRTCImage(storeImageAction.payload);

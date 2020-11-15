@@ -5,10 +5,10 @@ import {
 } from "../features/messages/messagesSlice";
 import {
   STORE_IMAGE,
+  STORE_GIFT_IMAGE,
   toReduxStoreImageAction,
-  asyncSelectImagesInRTCFormat,
   convertImagesToReduxFormat,
-  storeImage,
+  storeGiftImage,
   toReduxImage,
   selectImages,
 } from "../features/images/imagesSlice";
@@ -85,7 +85,10 @@ const ResponderMap = {
     if (game && game.id === gameId) {
       return {
         calculateResponsePayload: buildSetGameState,
-        actions: [storeImage(image), addPlayer({ ...player, connected: true })],
+        actions: [
+          storeGiftImage(image),
+          addPlayer({ ...player, connected: true }),
+        ],
       };
     } else {
       return {
@@ -126,6 +129,7 @@ function toReduxFormat(message) {
 function toReduxAction(actionInRTCFormat) {
   switch (actionInRTCFormat.type) {
     case STORE_IMAGE:
+    case STORE_GIFT_IMAGE:
       return toReduxStoreImageAction(actionInRTCFormat);
     case "players/addPlayer":
       return toReduxAddPlayerAction(actionInRTCFormat);
