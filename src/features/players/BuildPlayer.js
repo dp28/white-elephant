@@ -2,22 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from "@material-ui/core";
-import { selectUsername, updateUsername } from "../username/usernameSlice";
+import { selectUsername } from "../username/usernameSlice";
 import { fetchId } from "../../app/identity";
+import { isValidPlayerInput } from "./playerValidity";
+import { GiftInput } from "../gifts/GiftInput";
 
 const useStyles = makeStyles((theme) => ({
-  loadingContent: {
-    display: "block",
-    textAlign: "center",
-  },
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100%",
-  },
-  content: {
-    padding: theme.spacing(1),
+  container: {},
+  textField: {
+    marginBottom: theme.spacing(4),
   },
 }));
 
@@ -25,31 +18,27 @@ export function BuildPlayer({ onPlayerChange, id = fetchId() }) {
   const classes = useStyles();
   const username = useSelector(selectUsername);
   const [name, setName] = useState(username || "");
+  const [gift, setGift] = useState(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const player = { name, id, connectionId: id };
-    if (isValidPlayer(player)) {
+    const player = { name, id, connectionId: id, gift };
+    if (isValidPlayerInput(player)) {
       onPlayerChange(player);
-
-      if (id === fetchId()) {
-        dispatch(updateUsername(name));
-      }
     }
-  }, [name, id, onPlayerChange, dispatch]);
+  }, [name, id, gift, onPlayerChange, dispatch]);
 
   return (
     <div className={classes.container}>
       <TextField
-        label="Player name"
+        label="Your player name"
         value={name}
+        className={classes.textField}
         onChange={(event) => setName(event.target.value)}
         required={true}
+        margin="normal"
       />
+      <GiftInput onGiftChange={setGift} />
     </div>
   );
-}
-
-function isValidPlayer(player) {
-  return player.name && player.id && player.connectionId;
 }

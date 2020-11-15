@@ -5,6 +5,7 @@ import {
   RELAY_MESSAGE,
 } from "../features/messages/messagesSlice";
 import { STORE_IMAGE, toRTCStoreImage } from "../features/images/imagesSlice";
+import { addPlayer, toRTCAddPlayer } from "../features/players/playersSlice";
 
 export const communicationMiddleware = (store) => {
   const connectionsPromise = buildConnections(store);
@@ -46,9 +47,12 @@ async function toRTCMessage(message) {
 }
 
 async function toRTCPayload(action) {
-  if (action.type === STORE_IMAGE) {
-    return toRTCStoreImage(action);
-  } else {
-    return action;
+  switch (action.type) {
+    case STORE_IMAGE:
+      return toRTCStoreImage(action);
+    case addPlayer:
+      return toRTCAddPlayer(action);
+    default:
+      return action;
   }
 }

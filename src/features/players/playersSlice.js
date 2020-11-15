@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchId } from "../../app/identity";
 import { gameReducers } from "../game/gameActions";
+import { toRTCImage, toReduxImage } from "../images/imagesSlice";
 
 export const playersSlice = createSlice({
   name: "players",
@@ -57,5 +58,23 @@ export const selectPlayers = (state) =>
 export const selectPlayersById = (state) => state.players.playersById;
 
 export const selectSelfPlayer = (state) => state.players.playersById[fetchId()];
+
+export const toRTCAddPlayer = async (addPlayerAction) => {
+  const player = addPlayerAction.payload;
+  if (player.image) {
+    const image = await toRTCImage(addPlayerAction.payload);
+    return { ...addPlayerAction, payload: image };
+  }
+  return addPlayerAction;
+};
+
+export const toReduxAddPlayerAction = (addPlayerAction) => {
+  const player = addPlayerAction.payload;
+  if (player.image) {
+    const image = toReduxImage(addPlayerAction.payload);
+    return { ...addPlayerAction, payload: image };
+  }
+  return addPlayerAction;
+};
 
 export default playersSlice.reducer;

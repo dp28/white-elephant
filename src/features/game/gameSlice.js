@@ -99,8 +99,7 @@ export const requestGameToJoin = () => (dispatch) => {
   );
 };
 
-export const joinGame = ({ username, gameId, hostId }) => (dispatch) => {
-  console.log({ username, gameId, hostId });
+export const joinGame = ({ player, gameId, hostId }) => (dispatch) => {
   if (!hostId || !gameId) {
     return;
   }
@@ -115,7 +114,7 @@ export const joinGame = ({ username, gameId, hostId }) => (dispatch) => {
           type: JOIN_GAME,
           payload: {
             gameId,
-            player: { name: username, id: fetchId(), connectionId: fetchId() },
+            player,
           },
         },
       })

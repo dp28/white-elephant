@@ -2,19 +2,12 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import FormControl from "@material-ui/core/FormControl";
 import Alert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
 import { startGame, selectGameToJoin } from "./gameSlice";
-import { fetchId } from "../../app/identity";
-import {
-  Card,
-  CardContent,
-  CardActions,
-  CardHeader,
-  Typography,
-} from "@material-ui/core";
+import { Card, CardContent, CardActions, CardHeader } from "@material-ui/core";
 import { BuildPlayer } from "../players/BuildPlayer";
+import { updateUsername } from "../username/usernameSlice";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -27,10 +20,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexWrap: "wrap",
   },
-  textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-  },
   button: {
     margin: theme.spacing(1),
   },
@@ -38,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     margin: "auto",
     top: theme.spacing(1),
+  },
+  card: {
+    maxWidth: "600px",
   },
 }));
 
@@ -50,6 +42,7 @@ export function NewGame() {
 
   const onSubmit = (event) => {
     event.preventDefault();
+    dispatch(updateUsername(host.name));
     dispatch(
       startGame({
         host,
@@ -68,19 +61,17 @@ export function NewGame() {
           </p>
         </Alert>
       )}
-      <Card>
+      <Card className={classes.card}>
         <CardHeader title="Create a new game" />
         <CardContent>
-          <FormControl fullWidth={true}>
-            <TextField
-              label="Game name"
-              className={classes.textField}
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              margin="normal"
-              required={true}
-            />
-          </FormControl>
+          <TextField
+            label="Game name"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            margin="normal"
+            required={true}
+            helperText="The name players will see when joining your game"
+          />
           <BuildPlayer onPlayerChange={setHost} />
         </CardContent>
         <CardActions>

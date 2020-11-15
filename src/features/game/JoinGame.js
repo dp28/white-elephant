@@ -65,7 +65,7 @@ export function JoinGame() {
                 event.preventDefault();
                 dispatch(
                   joinGame({
-                    username: player.name,
+                    player,
                     gameId: game.gameId,
                     hostId: game.hostId,
                   })

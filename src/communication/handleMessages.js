@@ -15,8 +15,13 @@ import {
   setGameToJoin,
   gameNotFound,
 } from "../features/game/gameSlice";
-import { selectPlayersById, addPlayer } from "../features/players/playersSlice";
+import {
+  selectPlayersById,
+  addPlayer,
+  toReduxAddPlayerAction,
+} from "../features/players/playersSlice";
 import { selectUsername } from "../features/username/usernameSlice";
+import { selectGiftsById } from "../features/gifts/giftsSlice";
 
 export function listen({ connection, store }) {
   connection.on("data", (messageInRTCFormat) => {
@@ -68,8 +73,9 @@ const ResponderMap = {
     const { gameId, player } = request.payload;
     if (game && game.id === gameId) {
       const playersById = selectPlayersById(state);
+      const giftsById = selectGiftsById(state);
       return {
-        responsePayload: setGameState({ game, playersById }),
+        responsePayload: setGameState({ game, playersById, giftsById }),
         action: addPlayer({ ...player, connected: true }),
       };
     } else {
@@ -101,9 +107,12 @@ function toReduxFormat(message) {
 }
 
 function toReduxAction(actionInRTCFormat) {
-  if (actionInRTCFormat.type === STORE_IMAGE) {
-    return toReduxStoreImageAction(actionInRTCFormat);
-  } else {
-    return actionInRTCFormat;
+  switch (actionInRTCFormat.type) {
+    case STORE_IMAGE:
+      return toReduxStoreImageAction(actionInRTCFormat);
+    case addPlayer:
+      return toReduxAddPlayerAction(actionInRTCFormat);
+    default:
+      return actionInRTCFormat;
   }
 }

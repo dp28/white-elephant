@@ -19,31 +19,43 @@ export const { storeImage } = imagesSlice.actions;
 export const STORE_IMAGE = "images/storeImage";
 
 export const toRTCStoreImage = async (storeImageAction) => {
-  const { id, fileName, fileType, caption, url } = storeImageAction.payload;
+  const image = await toRTCImage(storeImageAction.payload);
+  return { ...storeImageAction, payload: image };
+};
+
+export const toReduxStoreImageAction = (storeImageAction) => {
+  const image = toReduxImage(storeImageAction.payload);
+  return storeImage(image);
+};
+
+export const toRTCImage = async (reduxImage) => {
+  const { id, fileName, fileType, caption, url } = reduxImage;
   const data = await fetch(url).then((r) => r.blob());
-  const payload = {
+  return {
     id,
     fileName,
     fileType,
     caption,
     data,
   };
-  return { ...storeImageAction, payload };
 };
 
-export const toReduxStoreImageAction = (storeImageAction) => {
-  const { id, fileName, fileType, caption, data } = storeImageAction.payload;
+export const toReduxImage = (rtcImage) => {
+  const { id, fileName, fileType, caption, data } = rtcImage;
   const blob = new Blob([data], { type: fileType });
-  return storeImage({
+  return {
     id,
     fileName,
     fileType,
     caption,
     url: URL.createObjectURL(blob),
-  });
+  };
 };
 
 export const createImage = ({ files, caption }) => {
+  if (!files[0]) {
+    return null;
+  }
   const blob = new Blob(files, { type: files[0].type });
   const image = {
     id: cuid(),
