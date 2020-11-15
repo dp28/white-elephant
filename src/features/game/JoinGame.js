@@ -42,7 +42,7 @@ export function JoinGame() {
     return (
       <Backdrop open={true}>
         <div className={classes.loadingContent}>
-          <Typography variant="h6">Trying to join game ...</Typography>
+          <Typography variant="h6">Finding game ...</Typography>
           <CircularProgress color="inherit" />
         </div>
       </Backdrop>

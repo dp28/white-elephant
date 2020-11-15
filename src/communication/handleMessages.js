@@ -24,6 +24,7 @@ import {
   selectPlayersById,
   addPlayer,
   toReduxAddPlayerAction,
+  selectPlayer,
 } from "../features/players/playersSlice";
 import { selectUsername } from "../features/username/usernameSlice";
 import { selectGiftsById } from "../features/gifts/giftsSlice";
@@ -68,16 +69,18 @@ const ResponderMap = {
   [REQUEST_GAME_TO_JOIN]: (state, request) => {
     const game = selectGame(state);
     const username = selectUsername(state);
-    const { gameId } = request.payload;
+    const { gameId, playerId } = request.payload;
     if (game && game.id === gameId) {
+      if (selectPlayer(playerId)(state)) {
+        return { calculateResponsePayload: buildSetGameState };
+      }
       return {
         responsePayload: setGameToJoin({
           game: { ...game, hostName: username },
         }),
       };
-    } else {
-      return { responsePayload: gameNotFound(gameId) };
     }
+    return { responsePayload: gameNotFound(gameId) };
   },
   [JOIN_GAME]: (state, request) => {
     const game = selectGame(state);

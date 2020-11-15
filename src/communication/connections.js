@@ -9,6 +9,8 @@ import {
 import {
   playerDisconnected,
   hostDisconnected,
+  selectPlayer,
+  playerReconnected,
 } from "../features/players/playersSlice";
 import { fetchId } from "../app/identity";
 import { selectUsername } from "../features/username/usernameSlice";
@@ -35,6 +37,9 @@ export async function buildConnections(store) {
     connection.on("open", () => {
       console.debug("Connected to", connectionId);
       store.dispatch(addConnection({ id: connectionId }));
+      if (selectPlayer(connectionId)(store.getState())) {
+        store.dispatch(playerReconnected({ playerId: connectionId }));
+      }
     });
 
     connection.on("error", (error) => {
@@ -112,6 +117,9 @@ export async function buildConnections(store) {
     startListening({ connection, connectionId: id });
 
     store.dispatch(addConnection({ id, incoming: true }));
+    if (selectPlayer(id)(store.getState())) {
+      store.dispatch(playerReconnected({ playerId: id }));
+    }
   });
 
   return {

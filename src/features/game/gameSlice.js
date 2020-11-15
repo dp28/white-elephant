@@ -15,6 +15,9 @@ export const gameSlice = createSlice({
     createGame: (state, action) => {
       state.game = action.payload;
     },
+    startLoadingGame: (state, action) => {
+      state.gameToJoin.loading = true;
+    },
     setGameToJoin: (state, action) => {
       state.gameToJoin.game = {
         gameId: action.payload.game.id,
@@ -47,6 +50,7 @@ export const {
   setGameState,
   setGameToJoin,
   gameNotFound,
+  startLoadingGame,
 } = gameSlice.actions;
 
 export const startGame = ({ host, name }) => (dispatch) => {
@@ -70,6 +74,7 @@ export const stopJoiningGame = () => (dispatch) => {
 };
 
 export const requestGameToJoin = () => (dispatch) => {
+  dispatch(startLoadingGame());
   const { hostId, gameId } = loadGameDataFromURL();
 
   if (!gameId || !hostId) {
@@ -91,6 +96,7 @@ export const requestGameToJoin = () => (dispatch) => {
         payload: {
           type: REQUEST_GAME_TO_JOIN,
           payload: {
+            playerId: fetchId(),
             gameId,
           },
         },
