@@ -3,6 +3,7 @@ import { fetchId } from "../../app/identity";
 import { gameReducers } from "../game/gameActions";
 import { toRTCImage, toReduxImage } from "../images/imagesSlice";
 import { selectGame } from "../game/gameSlice";
+import cuid from "cuid";
 
 export const playersSlice = createSlice({
   name: "players",
@@ -11,13 +12,24 @@ export const playersSlice = createSlice({
   },
   reducers: {
     ...gameReducers({
-      addPlayer: (state, action) => {
-        state.playersById[action.payload.id] = {
-          id: action.payload.id,
-          name: action.payload.name,
-          connectionId: action.payload.connectionId,
-          connected: action.payload.connected,
-        };
+      addPlayer: {
+        reducer: (state, action) => {
+          state.playersById[action.payload.id] = {
+            id: action.payload.id,
+            name: action.payload.name,
+            connectionId: action.payload.connectionId,
+            connected: action.payload.connected,
+          };
+        },
+        prepare: (payload) => {
+          const gift = payload.gift;
+          if (gift.id) {
+            return { payload };
+          }
+          return {
+            payload: { ...payload, gift: { ...gift, id: cuid() } },
+          };
+        },
       },
       updatePlayerName: (state, action) => {
         const player = state.playersById[action.payload.playerId];
@@ -71,7 +83,7 @@ export const selectSelfPlayer = (state) => state.players.playersById[fetchId()];
 export const toRTCAddPlayer = async (addPlayerAction) => {
   const player = addPlayerAction.payload;
   if (player.image) {
-    const image = await toRTCImage(addPlayerAction.payload);
+    const image = await toRTCImage(player.image);
     return { ...addPlayerAction, payload: image };
   }
   return addPlayerAction;

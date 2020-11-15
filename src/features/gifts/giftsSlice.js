@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import cuid from "cuid";
 import { gameReducers } from "../game/gameActions";
 import { addPlayer } from "../players/playersSlice";
 
@@ -15,13 +14,13 @@ export const giftsSlice = createSlice({
     });
 
     builder.addCase(addPlayer, (state, action) => {
-      const { name, description, imageId } = action.payload.gift;
-      const id = cuid();
+      const { id, name, description, imageId, wrapping } = action.payload.gift;
       state.giftsById[id] = {
-        id: id,
-        name: name,
-        description: description,
-        imageId: imageId,
+        id,
+        name,
+        description,
+        wrapping,
+        imageId,
         broughtByPlayerId: action.payload.id,
       };
     });

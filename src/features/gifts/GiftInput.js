@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField, Typography, Button } from "@material-ui/core";
+import { ChromePicker } from "react-color";
+import { ratio as calculateContrastRatio } from "get-contrast";
 import { isValidGiftInput } from "./giftValidity";
 import { createImage, storeImage } from "../images/imagesSlice";
-import { useDispatch } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -14,6 +16,9 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexBasis: "100%",
   },
+  imageInput: {
+    marginLeft: theme.spacing(1),
+  },
   imageContainer: {
     display: "flex",
     flexBasis: "100%",
@@ -21,8 +26,8 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
   },
   imageOutline: {
-    width: "300px",
-    height: "300px",
+    width: "250px",
+    height: "250px",
     border: `3px dashed ${theme.palette.grey[300]}`,
     backgroundColor: theme.palette.grey[100],
     display: "flex",
@@ -37,6 +42,13 @@ const useStyles = makeStyles((theme) => ({
   imageHelp: {
     color: theme.palette.grey[600],
   },
+  wrapping: {
+    cursor: "pointer",
+  },
+  colourPicker: {
+    position: "absolute",
+    zIndex: 1000,
+  },
 }));
 
 export function GiftInput({ onGiftChange }) {
@@ -44,6 +56,8 @@ export function GiftInput({ onGiftChange }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
+  const [colour, setColour] = useState(generateRandomColour());
+  const [showColourPicker, setShowColourPicker] = useState(false);
   const dispatch = useDispatch();
 
   const uploadImage = (event) => {
@@ -55,11 +69,16 @@ export function GiftInput({ onGiftChange }) {
   };
 
   useEffect(() => {
-    const gift = { name, description, imageId: image?.id };
+    const gift = {
+      name,
+      description,
+      imageId: image?.id,
+      wrapping: { colour },
+    };
     if (isValidGiftInput(gift)) {
       onGiftChange(gift);
     }
-  }, [name, onGiftChange, description, image]);
+  }, [name, onGiftChange, description, image, colour]);
 
   return (
     <div className={classes.container}>
@@ -81,30 +100,57 @@ export function GiftInput({ onGiftChange }) {
         helperText="This will be shown to other players once this gift is unwrapped"
       />
 
-      <div className={classes.imageContainer}>
-        <div className={classes.imageOutline}>
-          {image ? (
-            <img
-              src={image.url}
-              alt={image.fileName}
-              className={classes.image}
-            />
-          ) : (
-            <Typography className={classes.imageHelp}>
-              Upload an image of your gift
-            </Typography>
-          )}
+      <div className={classes.imageInput}>
+        <div className={classes.imageContainer}>
+          <div className={classes.imageOutline}>
+            {image ? (
+              <img
+                src={image.url}
+                alt={image.fileName}
+                className={classes.image}
+              />
+            ) : (
+              <Typography className={classes.imageHelp}>
+                Upload an image of your gift
+              </Typography>
+            )}
+          </div>
         </div>
+
+        <Button
+          component="label"
+          color={image ? "default" : "primary"}
+          variant="contained"
+        >
+          {image ? "Change image" : "Upload image"}
+          <input hidden type="file" accept="image/*" onChange={uploadImage} />
+        </Button>
       </div>
 
-      <Button
-        component="label"
-        color={image ? "default" : "primary"}
-        variant="contained"
-      >
-        {image ? "Change image" : "Upload image"}
-        <input hidden type="file" accept="image/*" onChange={uploadImage} />
-      </Button>
+      <div className={classes.imageInput}>
+        <div className={classes.imageContainer}>
+          <div
+            className={`${classes.imageOutline} ${classes.wrapping}`}
+            style={{ backgroundColor: colour }}
+            onClick={() => setShowColourPicker(!showColourPicker)}
+          >
+            <Typography
+              className={classes.imageHelp}
+              style={{ color: calculateContrastingColour(colour) }}
+            >
+              Select a colour to wrap your gift in
+            </Typography>
+          </div>
+        </div>
+
+        {showColourPicker && (
+          <ChromePicker
+            className={classes.colourPicker}
+            color={colour}
+            onChange={({ hex }) => setColour(hex)}
+          />
+        )}
+      </div>
 
       <TextField
         label="Gift description"
@@ -118,4 +164,21 @@ export function GiftInput({ onGiftChange }) {
       />
     </div>
   );
+}
+
+function generateRandomColour() {
+  const hexValue = Math.floor(Math.random() * 16777215).toString(16);
+  return `#${hexValue}`;
+}
+
+function calculateContrastingColour(colour) {
+  const black = "#000000";
+  const white = "#ffffff";
+  const blackContrastRatio = calculateContrastRatio(colour, black);
+  const whiteContrastRatio = calculateContrastRatio(colour, white);
+  if (blackContrastRatio > whiteContrastRatio) {
+    return black;
+  } else {
+    return white;
+  }
 }

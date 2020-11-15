@@ -86,12 +86,13 @@ const ResponderMap = {
     const game = selectGame(state);
     const { gameId, player, image } = request.payload;
     if (game && game.id === gameId) {
+      const actions = [addPlayer({ ...player, connected: true })];
+      if (image) {
+        actions.push(storeGiftImage(image));
+      }
       return {
         calculateResponsePayload: buildSetGameState,
-        actions: [
-          storeGiftImage(image),
-          addPlayer({ ...player, connected: true }),
-        ],
+        actions,
       };
     } else {
       return {
@@ -145,11 +146,15 @@ function toReduxAction(actionInRTCFormat) {
         },
       };
     case JOIN_GAME:
+      const image = actionInRTCFormat.payload.image;
+      if (!image) {
+        return actionInRTCFormat;
+      }
       return {
         ...actionInRTCFormat,
         payload: {
           ...actionInRTCFormat.payload,
-          image: toReduxImage(actionInRTCFormat.payload.image),
+          image: toReduxImage(image),
         },
       };
     default:

@@ -32,7 +32,10 @@ export function Gift({ id }) {
 
   return (
     <div className={classes.imageContainer}>
-      <div className={classes.imageOutline}>
+      <div
+        className={classes.imageOutline}
+        style={{ backgroundColor: gift.wrapping.colour }}
+      >
         {image ? (
           <img src={image.url} alt={image.fileName} className={classes.image} />
         ) : (

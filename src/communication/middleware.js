@@ -69,11 +69,15 @@ async function toRTCPayload(action) {
         },
       };
     case JOIN_GAME:
+      const image = action.payload.image;
+      if (!image) {
+        return action;
+      }
       return {
         ...action,
         payload: {
           ...action.payload,
-          image: await toRTCImage(action.payload.image),
+          image: await toRTCImage(image),
         },
       };
     default:
