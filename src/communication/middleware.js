@@ -4,8 +4,15 @@ import {
   BROADCAST_MESSAGE,
   RELAY_MESSAGE,
 } from "../features/messages/messagesSlice";
-import { STORE_IMAGE, toRTCStoreImage } from "../features/images/imagesSlice";
-import { addPlayer, toRTCAddPlayer } from "../features/players/playersSlice";
+import {
+  STORE_IMAGE,
+  toRTCStoreImage,
+  toRTCImage,
+  asyncSelectImagesInRTCFormat,
+  asyncConvertImagesRTCFormat,
+} from "../features/images/imagesSlice";
+import { toRTCAddPlayer } from "../features/players/playersSlice";
+import { JOIN_GAME } from "../features/game/gameSlice";
 
 export const communicationMiddleware = (store) => {
   const connectionsPromise = buildConnections(store);
@@ -50,8 +57,24 @@ async function toRTCPayload(action) {
   switch (action.type) {
     case STORE_IMAGE:
       return toRTCStoreImage(action);
-    case addPlayer:
+    case "players/addPlayer":
       return toRTCAddPlayer(action);
+    case "game/setGameState":
+      return {
+        ...action,
+        payload: {
+          ...action.payload,
+          images: await asyncConvertImagesRTCFormat(action.payload.images),
+        },
+      };
+    case JOIN_GAME:
+      return {
+        ...action,
+        payload: {
+          ...action.payload,
+          image: await toRTCImage(action.payload.image),
+        },
+      };
     default:
       return action;
   }

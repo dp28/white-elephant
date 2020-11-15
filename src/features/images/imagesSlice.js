@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import cuid from "cuid";
+import { gameAction } from "../game/gameActions";
 
 export const imagesSlice = createSlice({
   name: "images",
@@ -11,6 +12,13 @@ export const imagesSlice = createSlice({
       const { id, fileName, fileType, caption, url } = action.payload;
       state.imagesById[id] = { id, fileName, fileType, caption, url };
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase("game/setGameState", (state, action) => {
+      action.payload.images.forEach((image) => {
+        state.imagesById[image.id] = image;
+      });
+    });
   },
 });
 
@@ -69,5 +77,10 @@ export const createImage = ({ files, caption }) => {
 
 export const selectImages = (state) => Object.values(state.images.imagesById);
 export const selectImage = (id) => (state) => state.images.imagesById[id];
+
+export const asyncConvertImagesRTCFormat = (images) =>
+  Promise.all(images.map(toRTCImage));
+
+export const convertImagesToReduxFormat = (images) => images.map(toReduxImage);
 
 export default imagesSlice.reducer;

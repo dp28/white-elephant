@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import { selectGameToJoin, stopJoiningGame, joinGame } from "./gameSlice";
 import { BuildPlayer } from "../players/BuildPlayer";
+import { selectImage } from "../images/imagesSlice";
 
 const useStyles = makeStyles((theme) => ({
   loadingContent: {
@@ -34,6 +35,7 @@ export function JoinGame() {
   const classes = useStyles();
   const { game, loading } = useSelector(selectGameToJoin);
   const [player, setPlayer] = useState(null);
+  const image = useSelector(selectImage(player?.gift?.imageId));
   const dispatch = useDispatch();
 
   if (loading) {
@@ -65,7 +67,8 @@ export function JoinGame() {
                 event.preventDefault();
                 dispatch(
                   joinGame({
-                    player,
+                    image,
+                    player: player,
                     gameId: game.gameId,
                     hostId: game.hostId,
                   })

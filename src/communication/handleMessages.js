@@ -6,6 +6,11 @@ import {
 import {
   STORE_IMAGE,
   toReduxStoreImageAction,
+  asyncSelectImagesInRTCFormat,
+  convertImagesToReduxFormat,
+  storeImage,
+  toReduxImage,
+  selectImages,
 } from "../features/images/imagesSlice";
 import {
   JOIN_GAME,
@@ -41,15 +46,18 @@ export function listen({ connection, store }) {
 
 function respond({ store, message, connection }) {
   const state = store.getState();
-  const { responsePayload, action } = calculateResponse(state, message.payload);
+  const { responsePayload, actions } = calculateResponse(
+    state,
+    message.payload
+  );
   const response = buildResponse({
     request: message,
     payload: responsePayload,
   });
   store.dispatch(sendMessage(response));
 
-  if (action) {
-    store.dispatch(action);
+  if (actions) {
+    actions.forEach((action) => store.dispatch(action));
   }
 }
 
@@ -70,13 +78,14 @@ const ResponderMap = {
   },
   [JOIN_GAME]: (state, request) => {
     const game = selectGame(state);
-    const { gameId, player } = request.payload;
+    const { gameId, player, image } = request.payload;
     if (game && game.id === gameId) {
       const playersById = selectPlayersById(state);
       const giftsById = selectGiftsById(state);
+      const images = selectImages(state);
       return {
-        responsePayload: setGameState({ game, playersById, giftsById }),
-        action: addPlayer({ ...player, connected: true }),
+        responsePayload: setGameState({ game, playersById, giftsById, images }),
+        actions: [storeImage(image), addPlayer({ ...player, connected: true })],
       };
     } else {
       return {
@@ -110,8 +119,24 @@ function toReduxAction(actionInRTCFormat) {
   switch (actionInRTCFormat.type) {
     case STORE_IMAGE:
       return toReduxStoreImageAction(actionInRTCFormat);
-    case addPlayer:
+    case "players/addPlayer":
       return toReduxAddPlayerAction(actionInRTCFormat);
+    case "game/setGameState":
+      return {
+        ...actionInRTCFormat,
+        payload: {
+          ...actionInRTCFormat.payload,
+          images: convertImagesToReduxFormat(actionInRTCFormat.payload.images),
+        },
+      };
+    case JOIN_GAME:
+      return {
+        ...actionInRTCFormat,
+        payload: {
+          ...actionInRTCFormat.payload,
+          image: toReduxImage(actionInRTCFormat.payload.image),
+        },
+      };
     default:
       return actionInRTCFormat;
   }
