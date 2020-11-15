@@ -45,20 +45,23 @@ export function listen({ connection, store }) {
 }
 
 function respond({ store, message, connection }) {
-  const state = store.getState();
-  const { responsePayload, actions } = calculateResponse(
-    state,
-    message.payload
-  );
-  const response = buildResponse({
-    request: message,
-    payload: responsePayload,
-  });
-  store.dispatch(sendMessage(response));
+  const stateBefore = store.getState();
+  const {
+    responsePayload,
+    actions,
+    calculateResponsePayload,
+  } = calculateResponse(stateBefore, message.payload);
 
   if (actions) {
     actions.forEach((action) => store.dispatch(action));
   }
+
+  const response = buildResponse({
+    request: message,
+    payload: responsePayload || calculateResponsePayload(store.getState()),
+  });
+
+  store.dispatch(sendMessage(response));
 }
 
 const ResponderMap = {
@@ -80,11 +83,8 @@ const ResponderMap = {
     const game = selectGame(state);
     const { gameId, player, image } = request.payload;
     if (game && game.id === gameId) {
-      const playersById = selectPlayersById(state);
-      const giftsById = selectGiftsById(state);
-      const images = selectImages(state);
       return {
-        responsePayload: setGameState({ game, playersById, giftsById, images }),
+        calculateResponsePayload: buildSetGameState,
         actions: [storeImage(image), addPlayer({ ...player, connected: true })],
       };
     } else {
@@ -94,6 +94,14 @@ const ResponderMap = {
     }
   },
 };
+
+function buildSetGameState(state) {
+  const game = selectGame(state);
+  const playersById = selectPlayersById(state);
+  const giftsById = selectGiftsById(state);
+  const images = selectImages(state);
+  return setGameState({ game, playersById, giftsById, images });
+}
 
 const DefaultResponder = (_state, request) => ({
   responsePayload: {

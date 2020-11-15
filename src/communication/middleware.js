@@ -8,7 +8,6 @@ import {
   STORE_IMAGE,
   toRTCStoreImage,
   toRTCImage,
-  asyncSelectImagesInRTCFormat,
   asyncConvertImagesRTCFormat,
 } from "../features/images/imagesSlice";
 import { toRTCAddPlayer } from "../features/players/playersSlice";
@@ -17,13 +16,13 @@ import { JOIN_GAME } from "../features/game/gameSlice";
 export const communicationMiddleware = (store) => {
   const connectionsPromise = buildConnections(store);
 
-  return (next) => async (action) => {
+  return (next) => (action) => {
     if (
       action.type === RELAY_MESSAGE ||
       action.type === SEND_MESSAGE ||
       action.type === BROADCAST_MESSAGE
     ) {
-      await sendMessage(action, connectionsPromise);
+      sendMessage(action, connectionsPromise);
     }
     next(action);
   };
