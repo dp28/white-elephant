@@ -9,7 +9,7 @@ export const gameSlice = createSlice({
   name: "game",
   initialState: {
     game: null,
-    gameToJoin: { game: null, loading: false, error: null },
+    gameToJoin: { game: null, loading: false, error: null, joining: false },
   },
   reducers: {
     createGame: (state, action) => {
@@ -27,20 +27,27 @@ export const gameSlice = createSlice({
       };
       state.gameToJoin.error = null;
       state.gameToJoin.loading = false;
+      state.gameToJoin.joining = false;
+    },
+    startJoiningGame: (state, action) => {
+      state.gameToJoin.joining = true;
     },
     setGameState: (state, action) => {
       state.game = action.payload.game;
       state.gameToJoin.game = null;
       state.gameToJoin.loading = false;
+      state.gameToJoin.joining = false;
     },
     gameNotFound: (state, action) => {
       state.gameToJoin.error = action.payload.message || "Game not found";
       state.gameToJoin.loading = false;
+      state.gameToJoin.joining = false;
     },
     stopJoining: (state) => {
       state.game = null;
       state.gameToJoin.game = null;
       state.gameToJoin.loading = false;
+      state.gameToJoin.joining = false;
     },
   },
 });
@@ -51,6 +58,7 @@ export const {
   setGameToJoin,
   gameNotFound,
   startLoadingGame,
+  startJoiningGame,
 } = gameSlice.actions;
 
 export const startGame = ({ host, name }) => (dispatch) => {
@@ -111,6 +119,7 @@ export const joinGame = ({ player, image, gameId, hostId }) => (dispatch) => {
   }
 
   console.debug("Trying to join game", gameId, "on host", hostId);
+  dispatch(startJoiningGame());
 
   dispatch(
     sendMessage(

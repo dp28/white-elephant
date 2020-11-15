@@ -19,6 +19,13 @@ const useStyles = makeStyles((theme) => ({
   loadingContent: {
     display: "block",
     textAlign: "center",
+    padding: theme.spacing(1),
+  },
+  backdrop: {
+    zIndex: 10000,
+  },
+  spinner: {
+    marginTop: theme.spacing(2),
   },
   container: {
     display: "flex",
@@ -35,18 +42,20 @@ const useStyles = makeStyles((theme) => ({
 
 export function JoinGame() {
   const classes = useStyles();
-  const { game, loading } = useSelector(selectGameToJoin);
+  const { game, loading, joining } = useSelector(selectGameToJoin);
   const [player, setPlayer] = useState(null);
   const image = useSelector(selectImage(player?.gift?.imageId));
   const dispatch = useDispatch();
 
   if (loading) {
     return (
-      <Backdrop open={true}>
-        <div className={classes.loadingContent}>
-          <Typography variant="h6">Finding game ...</Typography>
-          <CircularProgress color="inherit" />
-        </div>
+      <Backdrop open={true} className={classes.backdrop}>
+        <Card className={classes.loadingContent}>
+          <CardContent>
+            <Typography>Finding game ...</Typography>
+            <CircularProgress color="inherit" className={classes.spinner} />
+          </CardContent>
+        </Card>
       </Backdrop>
     );
   } else {
@@ -64,7 +73,7 @@ export function JoinGame() {
             <Button onClick={() => dispatch(stopJoiningGame())}>Cancel</Button>
             <Button
               color="primary"
-              disabled={!player}
+              disabled={!player || joining}
               onClick={(event) => {
                 event.preventDefault();
                 dispatch(
@@ -81,6 +90,14 @@ export function JoinGame() {
             </Button>
           </CardActions>
         </Card>
+        <Backdrop open={joining} className={classes.backdrop}>
+          <Card className={classes.loadingContent}>
+            <CardContent>
+              <Typography>Joining game ...</Typography>
+              <CircularProgress color="inherit" className={classes.spinner} />
+            </CardContent>
+          </Card>
+        </Backdrop>
       </div>
     );
   }
