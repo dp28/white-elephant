@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "center",
     height: "100%",
+    padding: theme.spacing(3),
   },
   form: {
     display: "flex",
