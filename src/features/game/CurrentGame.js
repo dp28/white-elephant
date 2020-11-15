@@ -1,12 +1,27 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { AppBar, Typography, Toolbar, Grid } from "@material-ui/core";
+import {
+  AppBar,
+  Typography,
+  Toolbar,
+  Grid,
+  Backdrop,
+  CircularProgress,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { selectGame } from "./gameSlice";
 import { Players } from "../players/Players";
 import { Board } from "./Board";
+import { selectPlayer } from "../players/playersSlice";
+import { fetchId } from "../../app/identity";
+import Alert from "@material-ui/lab/Alert";
+import AlertTitle from "@material-ui/lab/AlertTitle";
 
 const useStyles = makeStyles((theme) => ({
+  spinner: {
+    marginLeft: "calc(50% - 30px)",
+    marginTop: theme.spacing(2),
+  },
   game: {
     height: "100%",
     width: "100%",
@@ -15,11 +30,18 @@ const useStyles = makeStyles((theme) => ({
   content: {
     marginTop: theme.spacing(1),
   },
+  backdrop: {
+    zIndex: 10000,
+    padding: theme.spacing(3),
+  },
 }));
 
 export function CurrentGame() {
   const classes = useStyles();
   const game = useSelector(selectGame);
+  const host = useSelector(selectPlayer(game.hostId));
+  const lostConnectionToHost = !host.connected && host.id !== fetchId();
+
   return (
     <div className={classes.game}>
       <AppBar>
@@ -37,6 +59,17 @@ export function CurrentGame() {
           <Players />
         </Grid>
       </Grid>
+
+      <Backdrop open={lostConnectionToHost} className={classes.backdrop}>
+        <Alert severity="error">
+          <AlertTitle>Lost connection to host</AlertTitle>
+          <Typography>
+            Attempting to reconnect now. If this is taking too long, try
+            refreshing the page.
+          </Typography>
+          <CircularProgress color="inherit" className={classes.spinner} />
+        </Alert>
+      </Backdrop>
     </div>
   );
 }

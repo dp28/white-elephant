@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { fetchId } from "../../app/identity";
 import { gameReducers } from "../game/gameActions";
 import { toRTCImage, toReduxImage } from "../images/imagesSlice";
+import { selectGame } from "../game/gameSlice";
 
 export const playersSlice = createSlice({
   name: "players",
