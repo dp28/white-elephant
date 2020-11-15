@@ -4,6 +4,7 @@ import { AppBar, Typography, Toolbar, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { selectGame } from "./gameSlice";
 import { Players } from "../players/Players";
+import { Board } from "./Board";
 
 const useStyles = makeStyles((theme) => ({
   game: {
@@ -29,6 +30,9 @@ export function CurrentGame() {
       <div className={classes.offset} />
 
       <Grid container spacing={3} className={classes.content}>
+        <Grid item xs={12} sm={8} md={9}>
+          <Board />
+        </Grid>
         <Grid item xs={12} sm={4} md={3}>
           <Players />
         </Grid>

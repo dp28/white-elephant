@@ -15,13 +15,13 @@ export const giftsSlice = createSlice({
     });
 
     builder.addCase(addPlayer, (state, action) => {
-      const { name, description, image } = action.payload.gift;
+      const { name, description, imageId } = action.payload.gift;
       const id = cuid();
       state.giftsById[id] = {
         id: id,
         name: name,
         description: description,
-        imageId: image?.id,
+        imageId: imageId,
         broughtByPlayerId: action.payload.id,
       };
     });
@@ -30,5 +30,6 @@ export const giftsSlice = createSlice({
 
 export const selectGifts = (state) => Object.values(state.gifts.giftsById);
 export const selectGiftsById = (state) => state.gifts.giftsById;
+export const selectGift = (id) => (state) => state.gifts.giftsById[id];
 
 export default giftsSlice.reducer;

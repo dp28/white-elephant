@@ -4,12 +4,12 @@ import cuid from "cuid";
 export const imagesSlice = createSlice({
   name: "images",
   initialState: {
-    images: {},
+    imagesById: {},
   },
   reducers: {
     storeImage: (state, action) => {
       const { id, fileName, fileType, caption, url } = action.payload;
-      state.images[id] = { id, fileName, fileType, caption, url };
+      state.imagesById[id] = { id, fileName, fileType, caption, url };
     },
   },
 });
@@ -67,6 +67,7 @@ export const createImage = ({ files, caption }) => {
   return image;
 };
 
-export const selectImages = (state) => Object.values(state.images.images);
+export const selectImages = (state) => Object.values(state.images.imagesById);
+export const selectImage = (id) => (state) => state.images.imagesById[id];
 
 export default imagesSlice.reducer;
