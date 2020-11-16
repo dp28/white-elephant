@@ -14,6 +14,7 @@ import {
 import { selectGameToJoin, stopJoiningGame, joinGame } from "./gameSlice";
 import { BuildPlayer } from "../players/BuildPlayer";
 import { selectImage } from "../images/imagesSlice";
+import { updateUsername } from "../username/usernameSlice";
 
 const useStyles = makeStyles((theme) => ({
   loadingContent: {
@@ -76,6 +77,7 @@ export function JoinGame() {
               disabled={!player || joining}
               onClick={(event) => {
                 event.preventDefault();
+                dispatch(updateUsername(player.name));
                 dispatch(
                   joinGame({
                     image,
