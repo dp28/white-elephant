@@ -4,6 +4,7 @@ import { fetchId } from "../../app/identity";
 import { sendMessage } from "../messages/messagesSlice";
 import { buildRequest } from "../../communication/messages";
 import { addPlayer } from "../players/playersSlice";
+import { gameReducers } from "./gameActions";
 
 export const gameSlice = createSlice({
   name: "game",
@@ -49,6 +50,11 @@ export const gameSlice = createSlice({
       state.gameToJoin.loading = false;
       state.gameToJoin.joining = false;
     },
+    ...gameReducers({
+      startExchangingGifts: (state, action) => {
+        state.game.exchangingGifts = true;
+      },
+    }),
   },
 });
 
@@ -59,6 +65,7 @@ export const {
   gameNotFound,
   startLoadingGame,
   startJoiningGame,
+  startExchangingGifts,
 } = gameSlice.actions;
 
 export const startGame = ({ host, name }) => (dispatch) => {

@@ -7,7 +7,11 @@ export const giftsSlice = createSlice({
   initialState: {
     giftsById: {},
   },
-  reducers: gameReducers({}),
+  reducers: gameReducers({
+    unwrapGift: (state, action) => {
+      state.giftsById[action.payload].wrapped = false;
+    },
+  }),
   extraReducers: (builder) => {
     builder.addCase("game/setGameState", (state, action) => {
       state.giftsById = action.payload.giftsById;
@@ -21,6 +25,7 @@ export const giftsSlice = createSlice({
         description,
         wrapping,
         imageId,
+        wrapped: true,
         broughtByPlayerId: action.payload.id,
       };
     });

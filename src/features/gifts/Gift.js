@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useSelector } from "react-redux";
 import { selectGift } from "./giftsSlice";
 import { selectImage } from "../images/imagesSlice";
+import { selectGame } from "../game/gameSlice";
 
 const useStyles = makeStyles((theme) => ({
   imageContainer: {
@@ -28,20 +29,34 @@ const useStyles = makeStyles((theme) => ({
 export function Gift({ id }) {
   const classes = useStyles();
   const gift = useSelector(selectGift(id));
+  const game = useSelector(selectGame);
   const image = useSelector(selectImage(gift.imageId));
 
   return (
     <div className={classes.imageContainer}>
-      <div
-        className={classes.imageOutline}
-        style={{ backgroundColor: gift.wrapping.colour }}
-      >
-        {image ? (
-          <img src={image.url} alt={image.fileName} className={classes.image} />
-        ) : (
-          gift.name
+      <div className={classes.imageOutline} style={calculateStyles(game, gift)}>
+        {!gift.wrapped && (
+          <>
+            {image ? (
+              <img
+                src={image.url}
+                alt={image.fileName}
+                className={classes.image}
+              />
+            ) : (
+              gift.name
+            )}
+          </>
         )}
       </div>
     </div>
   );
+}
+
+function calculateStyles(game, gift) {
+  if (game.exchangingGifts && gift.wrapped) {
+    return { backgroundColor: gift.wrapping.colour };
+  } else {
+    return {};
+  }
 }
