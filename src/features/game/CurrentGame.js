@@ -16,6 +16,7 @@ import { selectPlayer } from "../players/playersSlice";
 import { fetchId } from "../../app/identity";
 import Alert from "@material-ui/lab/Alert";
 import AlertTitle from "@material-ui/lab/AlertTitle";
+import { UpcomingTurns } from "../turns/UpcomingTurns";
 
 const useStyles = makeStyles((theme) => ({
   spinner: {
@@ -56,7 +57,7 @@ export function CurrentGame() {
           <Board />
         </Grid>
         <Grid item xs={12} sm={4} md={3}>
-          <Players />
+          {game.exchangingGifts ? <UpcomingTurns /> : <Players />}
         </Grid>
       </Grid>
 

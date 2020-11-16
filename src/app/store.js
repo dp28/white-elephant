@@ -6,6 +6,7 @@ import messages from "../features/messages/messagesSlice";
 import username from "../features/username/usernameSlice";
 import players from "../features/players/playersSlice";
 import gifts from "../features/gifts/giftsSlice";
+import turns from "../features/turns/turnsSlice";
 import { communicationMiddleware } from "../communication/middleware";
 import { gameMiddleware } from "../features/game/gameMiddleware";
 
@@ -18,6 +19,7 @@ export default configureStore({
     username,
     players,
     gifts,
+    turns,
   },
   middleware: [communicationMiddleware, gameMiddleware].concat(
     getDefaultMiddleware()

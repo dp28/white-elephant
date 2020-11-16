@@ -28,6 +28,7 @@ import {
 } from "../features/players/playersSlice";
 import { selectUsername } from "../features/username/usernameSlice";
 import { selectGiftsById } from "../features/gifts/giftsSlice";
+import { selectTurnsState } from "../features/turns/turnsSlice";
 
 export function listen({ connection, store }) {
   connection.on("data", (messageInRTCFormat) => {
@@ -107,7 +108,8 @@ function buildSetGameState(state) {
   const playersById = selectPlayersById(state);
   const giftsById = selectGiftsById(state);
   const images = selectImages(state);
-  return setGameState({ game, playersById, giftsById, images });
+  const turns = selectTurnsState(state);
+  return setGameState({ game, playersById, giftsById, images, turns });
 }
 
 const DefaultResponder = (_state, request) => ({
