@@ -44,6 +44,8 @@ const useStyles = makeStyles((theme) => ({
   },
   wrapping: {
     cursor: "pointer",
+    padding: theme.spacing(1),
+    textAlign: "center",
   },
   colourPicker: {
     position: "absolute",

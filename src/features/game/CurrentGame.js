@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import {
   AppBar,
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
   offset: theme.mixins.toolbar,
   content: {
     marginTop: theme.spacing(1),
-    height: "100%",
+    height: `calc(100% - ${theme.spacing(1)}px - 64px)`,
   },
   backdrop: {
     zIndex: 10000,
@@ -43,6 +43,13 @@ export function CurrentGame() {
   const game = useSelector(selectGame);
   const host = useSelector(selectPlayer(game.hostId));
   const lostConnectionToHost = !host.connected && host.id !== fetchId();
+
+  useEffect(() => {
+    document.getElementById("root").classList.add("full-height");
+    return () => {
+      document.getElementById("root").classList.remove("full-height");
+    };
+  });
 
   return (
     <div className={classes.game}>
