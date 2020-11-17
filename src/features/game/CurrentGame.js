@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
   offset: theme.mixins.toolbar,
   content: {
     marginTop: theme.spacing(1),
+    height: "100%",
   },
   backdrop: {
     zIndex: 10000,

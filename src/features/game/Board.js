@@ -6,6 +6,7 @@ import { selectGifts } from "../gifts/giftsSlice";
 import { Gift } from "../gifts/Gift";
 import { selectGame, startExchangingGifts } from "./gameSlice";
 import { fetchId } from "../../app/identity";
+import { CurrentTurnNotification } from "../turns/CurrentTurnNotification";
 
 const useStyles = makeStyles((theme) => ({
   board: {
@@ -38,17 +39,9 @@ export function Board() {
   const game = useSelector(selectGame);
   const dispatch = useDispatch();
 
-  return (
-    <div className={classes.board}>
-      <Grid container spacing={1} className={classes.content}>
-        {gifts.map((gift) => (
-          <Grid key={gift.id} item xs={12} sm={6} md={4}>
-            <Gift id={gift.id} />
-          </Grid>
-        ))}
-      </Grid>
-
-      {!game.exchangingGifts && (
+  if (!game.exchangingGifts) {
+    return (
+      <div className={classes.board}>
         <div className={classes.cover}>
           {game.hostId === fetchId() ? (
             <>
@@ -73,7 +66,22 @@ export function Board() {
             </Typography>
           )}
         </div>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className={classes.board}>
+      <Grid container spacing={1} className={classes.content}>
+        <Grid item xs={12}>
+          <CurrentTurnNotification />
+        </Grid>
+        {gifts.map((gift) => (
+          <Grid key={gift.id} item xs={12} sm={6} md={4}>
+            <Gift id={gift.id} />
+          </Grid>
+        ))}
+      </Grid>
     </div>
   );
 }

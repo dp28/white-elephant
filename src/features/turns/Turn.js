@@ -8,7 +8,7 @@ import { fetchId } from "../../app/identity";
 import { selectPlayer } from "../players/playersSlice";
 
 const useStyles = makeStyles((theme) => ({
-  player: {
+  turn: {
     display: "flex",
     alignItems: "center",
     marginBottom: theme.spacing(1),
@@ -39,7 +39,7 @@ export function Turn({ turn }) {
   const isSelf = player.id === fetchId();
 
   return (
-    <Card className={classes.player}>
+    <Card className={classes.turn}>
       <Typography className={classes.number}>{turn.number}</Typography>
       <Typography className={classes.name}>{player.name}</Typography>{" "}
       {turn.repeat && (

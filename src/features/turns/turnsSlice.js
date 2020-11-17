@@ -80,7 +80,7 @@ export const turnsSlice = createSlice({
 });
 
 export const selectUpcomingTurns = (state) => state.turns.upcomingTurns;
-export const selectNextTurn = (state) => state.turns.upcomingTurns[0];
+export const selectCurrentTurn = (state) => state.turns.upcomingTurns[0];
 export const selectTurnsState = (state) => state.turns;
 
 export default turnsSlice.reducer;
