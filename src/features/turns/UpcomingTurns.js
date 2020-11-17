@@ -20,7 +20,7 @@ export function UpcomingTurns() {
     <Paper elevation={0} className={classes.turns}>
       <Typography variant="h6">Turns</Typography>
       {turns.map((turn) => (
-        <Turn turn={turn} />
+        <Turn turn={turn} key={turn.index} />
       ))}
     </Paper>
   );

@@ -66,7 +66,7 @@ export const turnsSlice = createSlice({
     });
 
     builder.addCase(startExchangingGifts, (state, action) => {
-      const orderedTurns = shuffle(state.upcomingTurns);
+      const orderedTurns = action.payload.orderedTurns;
       state.upcomingTurns = [...orderedTurns, orderedTurns[0]].map(
         (turn, index) => ({
           ...turn,

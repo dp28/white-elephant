@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { gameReducers } from "../game/gameActions";
 import { addPlayer } from "../players/playersSlice";
 import { startExchangingGifts } from "../game/gameSlice";
-import { shuffle, sortByOrdering } from "../../utils/arrays";
+import { sortByOrdering } from "../../utils/arrays";
 
 export const giftsSlice = createSlice({
   name: "gifts",
@@ -33,8 +33,8 @@ export const giftsSlice = createSlice({
     });
 
     builder.addCase(startExchangingGifts, (state, action) => {
-      shuffle(Object.values(state.giftsById)).forEach((gift, index) => {
-        state.giftsById[gift.id].ordering = index;
+      action.payload.orderedGiftIds.forEach((giftId, index) => {
+        state.giftsById[giftId].ordering = index;
       });
     });
   },

@@ -7,6 +7,8 @@ import { Gift } from "../gifts/Gift";
 import { selectGame, startExchangingGifts } from "./gameSlice";
 import { fetchId } from "../../app/identity";
 import { CurrentTurnNotification } from "../turns/CurrentTurnNotification";
+import { shuffle } from "../../utils/arrays";
+import { selectUpcomingTurns } from "../turns/turnsSlice";
 
 const useStyles = makeStyles((theme) => ({
   board: {
@@ -37,6 +39,7 @@ export function Board() {
   const classes = useStyles();
   const gifts = useSelector(selectGifts);
   const game = useSelector(selectGame);
+  const upcomingTurns = useSelector(selectUpcomingTurns);
   const dispatch = useDispatch();
 
   if (!game.exchangingGifts) {
@@ -54,7 +57,11 @@ export function Board() {
                 color="primary"
                 onClick={(event) => {
                   event.preventDefault();
-                  dispatch(startExchangingGifts());
+                  const orderedGiftIds = shuffle(gifts.map((gift) => gift.id));
+                  const orderedTurns = shuffle(upcomingTurns);
+                  dispatch(
+                    startExchangingGifts({ orderedGiftIds, orderedTurns })
+                  );
                 }}
               >
                 Start game
