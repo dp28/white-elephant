@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
   game: {
     height: "100%",
     width: "100%",
+    background: theme.palette.grey[100],
   },
   offset: theme.mixins.toolbar,
   content: {

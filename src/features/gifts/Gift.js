@@ -1,21 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { selectGift } from "./giftsSlice";
 import { selectImage } from "../images/imagesSlice";
 import { selectGame } from "../game/gameSlice";
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  CardActionArea,
+} from "@material-ui/core";
+import { openGift } from "../turns/turnsSlice";
+import { fetchId } from "../../app/identity";
 
 const useStyles = makeStyles((theme) => ({
-  imageContainer: {
-    display: "flex",
-    flexBasis: "100%",
-    margin: theme.spacing(1),
-  },
-  imageOutline: {
-    width: "300px",
+  giftContainer: {
+    width: "100%",
     height: "300px",
-    backgroundColor: theme.palette.grey[300],
+    margin: theme.spacing(1),
     display: "flex",
+    flexDirection: "column",
+  },
+  textContent: {
+    display: "flex",
+    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -24,32 +33,82 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     height: "100%",
   },
+  wrapping: {
+    height: "100%",
+    width: "100%",
+  },
+  openable: {
+    cursor: "pointer",
+  },
+  emphasized: {
+    filter: "saturate(95%) brightness(95%) ",
+  },
+  imageWrapper: {
+    height: "80%",
+    width: "100%",
+  },
+  actionArea: {
+    height: "100%",
+    width: "100%",
+  },
 }));
 
-export function Gift({ id }) {
+export function Gift({ id, openable = false }) {
   const classes = useStyles();
   const gift = useSelector(selectGift(id));
   const game = useSelector(selectGame);
   const image = useSelector(selectImage(gift.imageId));
+  const [emphasized, setEmphasized] = useState(false);
+  const dispatch = useDispatch();
+
+  const whenCanInteract = (func) => (event) => {
+    if (openable && gift.wrapped) {
+      func(event);
+    }
+  };
 
   return (
-    <div className={classes.imageContainer}>
-      <div className={classes.imageOutline} style={calculateStyles(game, gift)}>
-        {!gift.wrapped && (
-          <>
-            {image ? (
-              <img
-                src={image.url}
-                alt={image.fileName}
+    <Card
+      className={classes.giftContainer}
+      raised={emphasized && gift.wrapped}
+      onClick={whenCanInteract(() =>
+        dispatch(
+          openGift({
+            performedByPlayerId: fetchId(),
+            giftId: gift.id,
+          })
+        )
+      )}
+      onMouseOver={whenCanInteract(() => setEmphasized(true))}
+      onMouseOut={whenCanInteract(() => setEmphasized(false))}
+    >
+      {gift.wrapped && (
+        <div className={classes.actionArea}>
+          <div
+            className={`${classes.wrapping} ${
+              openable ? classes.openable : ""
+            } ${emphasized ? classes.emphasized : ""}`}
+            style={calculateStyles(game, gift)}
+          ></div>
+        </div>
+      )}
+      {!gift.wrapped && (
+        <>
+          {image && (
+            <div className={classes.imageWrapper}>
+              <CardMedia
+                image={image.url}
+                title={gift.name}
                 className={classes.image}
               />
-            ) : (
-              gift.name
-            )}
-          </>
-        )}
-      </div>
-    </div>
+            </div>
+          )}
+          <CardContent className={classes.textContent}>
+            <Typography>{gift.name}</Typography>
+          </CardContent>
+        </>
+      )}
+    </Card>
   );
 }
 

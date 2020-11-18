@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { gameReducers } from "../game/gameActions";
 import { addPlayer } from "../players/playersSlice";
 import { startExchangingGifts } from "../game/gameSlice";
-import { shuffle } from "../../utils/arrays";
 
 export const turnsSlice = createSlice({
   name: "turns",
@@ -18,6 +17,7 @@ export const turnsSlice = createSlice({
           turn: state.upcomingTurns[0],
           hostId: state.hostId,
           performedByPlayerId: action.payload.performedByPlayerId,
+          forPlayerId: action.payload.forPlayerId,
         })
       ) {
         const currentTurn = state.upcomingTurns.shift();
@@ -27,6 +27,7 @@ export const turnsSlice = createSlice({
           type: "steal",
           giftId: action.payload.giftId,
           fromPlayerId: action.payload.fromPlayerId,
+          forPlayerId: action.payload.forPlayerId,
         });
       }
     },
@@ -78,6 +79,8 @@ export const turnsSlice = createSlice({
     });
   },
 });
+
+export const { stealGift, openGift } = turnsSlice.actions;
 
 export const selectUpcomingTurns = (state) => state.turns.upcomingTurns;
 export const selectCurrentTurn = (state) => state.turns.upcomingTurns[0];

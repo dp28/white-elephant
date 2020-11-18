@@ -10,6 +10,7 @@ import { fetchId } from "./app/identity";
 const useStyles = makeStyles((theme) => ({
   app: {
     height: "100%",
+    background: theme.palette.grey[100],
   },
   container: {
     height: "100%",

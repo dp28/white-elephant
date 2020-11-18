@@ -42,6 +42,10 @@ export function Board() {
   const upcomingTurns = useSelector(selectUpcomingTurns);
   const dispatch = useDispatch();
 
+  const canOpenGifts =
+    game.exchangingGifts &&
+    (game.hostId === fetchId() || upcomingTurns[0].playerId === fetchId());
+
   if (!game.exchangingGifts) {
     return (
       <div className={classes.board}>
@@ -85,7 +89,7 @@ export function Board() {
         </Grid>
         {gifts.map((gift) => (
           <Grid key={gift.id} item xs={12} sm={6} md={4}>
-            <Gift id={gift.id} />
+            <Gift id={gift.id} openable={canOpenGifts} />
           </Grid>
         ))}
       </Grid>

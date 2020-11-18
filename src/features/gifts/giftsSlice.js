@@ -1,19 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { gameReducers } from "../game/gameActions";
 import { addPlayer } from "../players/playersSlice";
 import { startExchangingGifts } from "../game/gameSlice";
 import { sortByOrdering } from "../../utils/arrays";
+import { openGift } from "../turns/turnsSlice";
 
 export const giftsSlice = createSlice({
   name: "gifts",
   initialState: {
     giftsById: {},
   },
-  reducers: gameReducers({
-    unwrapGift: (state, action) => {
-      state.giftsById[action.payload].wrapped = false;
-    },
-  }),
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase("game/setGameState", (state, action) => {
       state.giftsById = action.payload.giftsById;
@@ -36,6 +32,12 @@ export const giftsSlice = createSlice({
       action.payload.orderedGiftIds.forEach((giftId, index) => {
         state.giftsById[giftId].ordering = index;
       });
+    });
+
+    builder.addCase(openGift, (state, action) => {
+      const gift = state.giftsById[action.payload.giftId];
+      gift.wrapped = false;
+      gift.ownerId = action.payload.forPlayerId;
     });
   },
 });
