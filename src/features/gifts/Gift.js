@@ -71,7 +71,7 @@ export function Gift({ id, openable = false }) {
   const currentTurn = useSelector(selectCurrentTurn);
   const [emphasized, setEmphasized] = useState(false);
   const dispatch = useDispatch();
-  const canSteal = calculateCanSteal(currentTurn, gift);
+  const canSteal = calculateCanSteal(currentTurn, gift, game.hostId);
 
   const whenCanInteract = (func) => (event) => {
     if ((openable && gift.wrapped) || canSteal) {
@@ -152,9 +152,13 @@ function calculateStyles(game, gift) {
   }
 }
 
-function calculateCanSteal({ maxSteals, stolenGifts, currentPlayerId }, gift) {
+function calculateCanSteal(
+  { maxSteals, stolenGifts, currentPlayerId },
+  gift,
+  hostId
+) {
   return (
-    currentPlayerId === fetchId() &&
+    (currentPlayerId === fetchId() || hostId === fetchId()) &&
     !gift.wrapped &&
     gift.ownerId !== currentPlayerId &&
     stolenGifts[stolenGifts.length - 1]?.giftId !== gift.id &&
