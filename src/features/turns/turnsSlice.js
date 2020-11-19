@@ -99,17 +99,19 @@ function moveToNextTurn(turnsState) {
   turnsState.currentTurn = {
     ...currentTurn,
     wrappedGiftCount,
-    maxSteals: calculateMaxSteals(turnsState),
+    maxSteals: calculateMaxSteals(
+      currentTurn,
+      turnsState.maxNumberOfStealsPerTurn
+    ),
   };
 }
 
-function calculateMaxSteals(turnsState) {
-  const { upcomingTurns, maxNumberOfStealsPerTurn } = turnsState;
-  if (upcomingTurns.length >= 1) {
+function calculateMaxSteals(currentTurn, maxNumberOfStealsPerTurn) {
+  if (currentTurn.repeat) {
     return { limited: false };
   }
 
-  const openedGiftCount = turnsState.currentTurn.index;
+  const openedGiftCount = currentTurn.index;
 
   return {
     limited: true,

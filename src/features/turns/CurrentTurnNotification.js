@@ -70,14 +70,16 @@ export function CurrentTurnNotification() {
   }
 }
 
-function buildInstructions({ maxSteals, wrappedGiftCount }) {
-  if (maxSteals.limited && maxSteals.count === 0) {
+function buildInstructions({ maxSteals, wrappedGiftCount, stolenGifts }) {
+  const stealsRemaining = (maxSteals.count || 0) - stolenGifts.length;
+  const stealCountString = buildStealCountString(stealsRemaining);
+  const giftChoiceString = buildGiftChoiceString(wrappedGiftCount);
+
+  if (maxSteals.limited && stealsRemaining <= 0) {
     return {
-      currentPlayer: `Choose ${giftChoiceString(wrappedGiftCount)} to open.`,
-      host: `should choose ${giftChoiceString(wrappedGiftCount)} to open.`,
-      otherPlayers: `They must choose ${giftChoiceString(
-        wrappedGiftCount
-      )} to open.`,
+      currentPlayer: `Choose ${giftChoiceString} to open.`,
+      host: `should choose ${giftChoiceString} to open.`,
+      otherPlayers: `They must choose ${giftChoiceString} to open.`,
     };
   } else if (wrappedGiftCount === 0) {
     return {
@@ -88,23 +90,24 @@ function buildInstructions({ maxSteals, wrappedGiftCount }) {
     };
   } else {
     return {
-      currentPlayer: `You can either choose to open ${giftChoiceString(
-        wrappedGiftCount
-      )} or choose to steal a gift someone has already unwrapped.`,
-      host: `can either choose to open ${giftChoiceString(
-        wrappedGiftCount
-      )} or choose to steal a gift someone has already unwrapped.`,
-      otherPlayers: `They can either choose to open ${giftChoiceString(
-        wrappedGiftCount
-      )} or choose to steal a gift someone has already unwrapped.`,
+      currentPlayer: `You can either choose to open ${giftChoiceString} or choose to steal a gift someone has already unwrapped. Only ${stealCountString} can be stolen before someone must open a gift`,
+      host: `can either choose to open ${giftChoiceString} or choose to steal a gift someone has already unwrapped. Only ${stealCountString} can be stolen before someone must open a gift`,
+      otherPlayers: `They can either choose to open ${giftChoiceString} or choose to steal a gift someone has already unwrapped. Only ${stealCountString} can be stolen before someone must open a gift`,
     };
   }
 }
 
-function giftChoiceString(wrappedCount) {
+function buildGiftChoiceString(wrappedCount) {
   if (wrappedCount === 1) {
     return `the last remaining wrapped gift`;
   } else {
     return `one of the ${wrappedCount} wrapped gifts`;
   }
+}
+
+function buildStealCountString(count) {
+  if (count === 1) {
+    return "1 more gift";
+  }
+  return `${count} more gifts`;
 }
