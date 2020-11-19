@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
   },
   actionPrompt: {
     position: "absolute",
-    backgroundColor: theme.palette.grey[100] + "33",
+    backgroundColor: theme.palette.grey[800] + "55",
     height: "100%",
     width: "100%",
     display: "flex",
