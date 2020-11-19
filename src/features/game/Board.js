@@ -45,7 +45,7 @@ export function Board() {
 
   const canOpenGifts =
     game.exchangingGifts &&
-    (game.hostId === fetchId() || currentTurn.playerId === fetchId());
+    (game.hostId === fetchId() || currentTurn.currentPlayerId === fetchId());
 
   if (!game.exchangingGifts) {
     return (

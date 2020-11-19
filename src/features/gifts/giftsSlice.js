@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { addPlayer } from "../players/playersSlice";
 import { startExchangingGifts } from "../game/gameSlice";
 import { sortByOrdering } from "../../utils/arrays";
-import { openGift } from "../turns/turnsSlice";
+import { openGift, stealGift } from "../turns/turnsSlice";
 
 export const giftsSlice = createSlice({
   name: "gifts",
@@ -38,6 +38,18 @@ export const giftsSlice = createSlice({
       const gift = state.giftsById[action.payload.giftId];
       gift.wrapped = false;
       gift.ownerId = action.payload.forPlayerId;
+    });
+
+    builder.addCase(stealGift, (state, action) => {
+      const previousGift = Object.values(state.giftsById).find(
+        (otherGift) => otherGift.ownerId === action.payload.forPlayerId
+      );
+      const gift = state.giftsById[action.payload.giftId];
+      gift.ownerId = action.payload.forPlayerId;
+
+      if (previousGift) {
+        previousGift.ownerId = action.payload.fromPlayerId;
+      }
     });
   },
 });

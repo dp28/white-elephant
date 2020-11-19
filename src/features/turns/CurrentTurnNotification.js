@@ -17,16 +17,21 @@ const useStyles = makeStyles((theme) => ({
 export function CurrentTurnNotification() {
   const classes = useStyles();
   const currentTurn = useSelector(selectCurrentTurn);
-  const player = useSelector(selectPlayer(currentTurn.playerId));
+  const player = useSelector(selectPlayer(currentTurn.currentPlayerId));
   const isHost = fetchId() === useSelector(selectGame).hostId;
   const isSelf = player.id === fetchId();
 
   const instructions = buildInstructions(currentTurn);
+  const showStolenMessage = currentTurn.stolenGifts.length > 0;
 
   if (isSelf) {
     return (
       <Card className={classes.notification}>
-        <CardHeader title="It's your turn!" />
+        <CardHeader
+          title={`It's your turn${
+            showStolenMessage ? " because your gift was stolen!" : "!"
+          }`}
+        />
         <CardContent>
           <Typography>{instructions.currentPlayer}</Typography>
         </CardContent>
@@ -35,7 +40,11 @@ export function CurrentTurnNotification() {
   } else if (isHost) {
     return (
       <Card className={classes.notification}>
-        <CardHeader title={`It's ${player.name}'s turn`} />
+        <CardHeader
+          title={`It's ${player.name}'s turn${
+            showStolenMessage ? " because their gift was stolen" : ""
+          }`}
+        />
         <CardContent>
           <Typography>
             As the host, you can either wait for {player.name} to take their
@@ -48,7 +57,11 @@ export function CurrentTurnNotification() {
   } else {
     return (
       <Card className={classes.notification}>
-        <CardHeader title={`It's ${player.name}'s turn`} />
+        <CardHeader
+          title={`It's ${player.name}'s turn${
+            showStolenMessage ? " because their gift was stolen" : ""
+          }`}
+        />
         <CardContent>
           <Typography>{instructions.otherPlayers}</Typography>
         </CardContent>

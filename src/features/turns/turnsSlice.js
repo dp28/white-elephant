@@ -26,6 +26,7 @@ export const turnsSlice = createSlice({
           fromPlayerId: action.payload.fromPlayerId,
           toPlayerId: action.payload.toPlayerId,
         });
+        state.currentTurn.currentPlayerId = action.payload.fromPlayerId;
       }
     },
     openGift: (state, action) => {
@@ -67,6 +68,7 @@ export const turnsSlice = createSlice({
           number: index + 1,
           repeat: index >= orderedTurns.length,
           stolenGifts: [],
+          currentPlayerId: turn.playerId,
         })
       );
       moveToNextTurn(state);
@@ -84,7 +86,7 @@ export const selectCurrentTurn = (state) => state.turns.currentTurn;
 export default turnsSlice.reducer;
 
 function allowedToPerformTurn({ turn, performedByPlayerId, performedByHost }) {
-  return performedByPlayerId === turn.playerId || performedByHost;
+  return performedByPlayerId === turn.currentPlayerId || performedByHost;
 }
 
 function moveToNextTurn(turnsState) {
