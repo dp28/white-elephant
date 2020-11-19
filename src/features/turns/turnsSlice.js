@@ -6,54 +6,46 @@ import { startExchangingGifts } from "../game/gameSlice";
 export const turnsSlice = createSlice({
   name: "turns",
   initialState: {
-    performedTurns: [],
+    currentTurn: null,
     upcomingTurns: [],
     hostId: null,
+    maxNumberOfStealsPerTurn: 3,
   },
   reducers: gameReducers({
     stealGift: (state, action) => {
       if (
         allowedToPerformTurn({
-          turn: state.upcomingTurns[0],
-          hostId: state.hostId,
+          turn: state.currentTurn,
+          performedByHost: action.payload.performedByHost,
           performedByPlayerId: action.payload.performedByPlayerId,
           forPlayerId: action.payload.forPlayerId,
         })
       ) {
-        const currentTurn = state.upcomingTurns.shift();
-        state.performedTurns.push({
-          ...currentTurn,
-          performedByPlayerId: action.payload.performedByPlayerId,
-          type: "steal",
+        state.currentTurn.stolenGifts.push({
           giftId: action.payload.giftId,
           fromPlayerId: action.payload.fromPlayerId,
-          forPlayerId: action.payload.forPlayerId,
+          toPlayerId: action.payload.toPlayerId,
         });
       }
     },
     openGift: (state, action) => {
       if (
         allowedToPerformTurn({
-          turn: state.upcomingTurns[0],
-          hostId: state.hostId,
+          turn: state.currentTurn,
+          performedByHost: action.payload.performedByHost,
           performedByPlayerId: action.payload.performedByPlayerId,
         })
       ) {
-        const currentTurn = state.upcomingTurns.shift();
-        state.performedTurns.push({
-          ...currentTurn,
-          performedByPlayerId: action.payload.performedByPlayerId,
-          type: "open",
-          giftId: action.payload.giftId,
-        });
+        moveToNextTurn(state);
       }
     },
   }),
   extraReducers: (builder) => {
     builder.addCase("game/setGameState", (state, action) => {
-      state.performedTurns = action.payload.turns.performedTurns;
       state.upcomingTurns = action.payload.turns.upcomingTurns;
-      state.hostId = action.payload.game.hostId;
+      state.currentTurn = action.payload.turns.currentTurn;
+      state.maxNumberOfStealsPerTurn =
+        action.payload.turns.maxNumberOfStealsPerTurn;
     });
 
     builder.addCase(addPlayer, (state, action) => {
@@ -74,8 +66,10 @@ export const turnsSlice = createSlice({
           index,
           number: index + 1,
           repeat: index >= orderedTurns.length,
+          stolenGifts: [],
         })
       );
+      moveToNextTurn(state);
     });
   },
 });
@@ -83,13 +77,40 @@ export const turnsSlice = createSlice({
 export const { stealGift, openGift } = turnsSlice.actions;
 
 export const selectUpcomingTurns = (state) => state.turns.upcomingTurns;
-export const selectCurrentTurn = (state) => state.turns.upcomingTurns[0];
 export const selectTurnsState = (state) => state.turns;
+
+export const selectCurrentTurn = (state) => state.turns.currentTurn;
 
 export default turnsSlice.reducer;
 
-function allowedToPerformTurn({ turn, performedByPlayerId, hostId }) {
-  return (
-    performedByPlayerId === turn.playerId || performedByPlayerId === hostId
-  );
+function allowedToPerformTurn({ turn, performedByPlayerId, performedByHost }) {
+  return performedByPlayerId === turn.playerId || performedByHost;
+}
+
+function moveToNextTurn(turnsState) {
+  const wrappedGiftCount = turnsState.upcomingTurns.filter(
+    (turn) => !turn.repeat
+  ).length;
+
+  const currentTurn = turnsState.upcomingTurns.shift();
+
+  turnsState.currentTurn = {
+    ...currentTurn,
+    wrappedGiftCount,
+    maxSteals: calculateMaxSteals(turnsState),
+  };
+}
+
+function calculateMaxSteals(turnsState) {
+  const { upcomingTurns, maxNumberOfStealsPerTurn } = turnsState;
+  if (upcomingTurns.length >= 1) {
+    return { limited: false };
+  }
+
+  const openedGiftCount = turnsState.currentTurn.index;
+
+  return {
+    limited: true,
+    count: Math.min(openedGiftCount, maxNumberOfStealsPerTurn),
+  };
 }

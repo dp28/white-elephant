@@ -11,7 +11,7 @@ import {
   Typography,
   CardActionArea,
 } from "@material-ui/core";
-import { openGift } from "../turns/turnsSlice";
+import { openGift, selectCurrentTurn } from "../turns/turnsSlice";
 import { fetchId } from "../../app/identity";
 
 const useStyles = makeStyles((theme) => ({
@@ -58,6 +58,7 @@ export function Gift({ id, openable = false }) {
   const gift = useSelector(selectGift(id));
   const game = useSelector(selectGame);
   const image = useSelector(selectImage(gift.imageId));
+  const currentTurn = useSelector(selectCurrentTurn);
   const [emphasized, setEmphasized] = useState(false);
   const dispatch = useDispatch();
 
@@ -75,7 +76,9 @@ export function Gift({ id, openable = false }) {
         dispatch(
           openGift({
             performedByPlayerId: fetchId(),
+            performedByHost: fetchId() === game.hostId,
             giftId: gift.id,
+            forPlayerId: currentTurn.playerId,
           })
         )
       )}

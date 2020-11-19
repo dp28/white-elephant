@@ -18,7 +18,7 @@ export function UpcomingTurns() {
 
   return (
     <Paper elevation={0} className={classes.turns}>
-      <Typography variant="h6">Turns</Typography>
+      <Typography variant="h6">Upcoming Turns</Typography>
       {turns.map((turn) => (
         <Turn turn={turn} key={turn.index} />
       ))}

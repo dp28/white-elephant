@@ -21,12 +21,14 @@ export function CurrentTurnNotification() {
   const isHost = fetchId() === useSelector(selectGame).hostId;
   const isSelf = player.id === fetchId();
 
+  const instructions = buildInstructions(currentTurn);
+
   if (isSelf) {
     return (
       <Card className={classes.notification}>
         <CardHeader title="It's your turn!" />
         <CardContent>
-          <Typography>{chooseInstructions(currentTurn)}</Typography>
+          <Typography>{instructions.currentPlayer}</Typography>
         </CardContent>
       </Card>
     );
@@ -38,7 +40,7 @@ export function CurrentTurnNotification() {
           <Typography>
             As the host, you can either wait for {player.name} to take their
             turn or you can take it for them. If you decide to take it for them,
-            you {chooseHostInstructions(currentTurn)}
+            you {instructions.host}
           </Typography>
         </CardContent>
       </Card>
@@ -48,39 +50,48 @@ export function CurrentTurnNotification() {
       <Card className={classes.notification}>
         <CardHeader title={`It's ${player.name}'s turn`} />
         <CardContent>
-          <Typography>{chooseComments(currentTurn)}</Typography>
+          <Typography>{instructions.otherPlayers}</Typography>
         </CardContent>
       </Card>
     );
   }
 }
 
-function chooseInstructions(currentTurn) {
-  if (currentTurn.index === 0) {
-    return "Choose a gift to open.";
-  } else if (currentTurn.repeat) {
-    return "Choose a gift to steal";
+function buildInstructions({ maxSteals, wrappedGiftCount }) {
+  if (maxSteals.limited && maxSteals.count === 0) {
+    return {
+      currentPlayer: `Choose ${giftChoiceString(wrappedGiftCount)} to open.`,
+      host: `should choose ${giftChoiceString(wrappedGiftCount)} to open.`,
+      otherPlayers: `They must choose ${giftChoiceString(
+        wrappedGiftCount
+      )} to open.`,
+    };
+  } else if (wrappedGiftCount === 0) {
+    return {
+      currentPlayer:
+        "All gifts have been unwrapped! Choose a gift to steal or finish the game.",
+      host: " should choose a gift to steal or finish the game.",
+      otherPlayers: "They can choose a gift to steal or can finish the game.",
+    };
   } else {
-    return "You can either choose to open a new gift or choose to steal a gift someone has already opened.";
+    return {
+      currentPlayer: `You can either choose to open ${giftChoiceString(
+        wrappedGiftCount
+      )} or choose to steal a gift someone has already unwrapped.`,
+      host: `can either choose to open ${giftChoiceString(
+        wrappedGiftCount
+      )} or choose to steal a gift someone has already unwrapped.`,
+      otherPlayers: `They can either choose to open ${giftChoiceString(
+        wrappedGiftCount
+      )} or choose to steal a gift someone has already unwrapped.`,
+    };
   }
 }
 
-function chooseHostInstructions(currentTurn) {
-  if (currentTurn.index === 0) {
-    return "should choose a gift to open.";
-  } else if (currentTurn.repeat) {
-    return "should choose a gift to steal";
+function giftChoiceString(wrappedCount) {
+  if (wrappedCount === 1) {
+    return `the last remaining wrapped gift`;
   } else {
-    return "can either choose to open a new gift or choose to steal a gift someone has already opened.";
-  }
-}
-
-function chooseComments(currentTurn) {
-  if (currentTurn.index === 0) {
-    return "They must choose a gift to open.";
-  } else if (currentTurn.repeat) {
-    return "They must choose a gift to steal";
-  } else {
-    return "They can either choose to open a new gift or choose to steal a gift someone has already opened.";
+    return `one of the ${wrappedCount} wrapped gifts`;
   }
 }

@@ -8,7 +8,7 @@ import { selectGame, startExchangingGifts } from "./gameSlice";
 import { fetchId } from "../../app/identity";
 import { CurrentTurnNotification } from "../turns/CurrentTurnNotification";
 import { shuffle } from "../../utils/arrays";
-import { selectUpcomingTurns } from "../turns/turnsSlice";
+import { selectUpcomingTurns, selectCurrentTurn } from "../turns/turnsSlice";
 
 const useStyles = makeStyles((theme) => ({
   board: {
@@ -39,12 +39,13 @@ export function Board() {
   const classes = useStyles();
   const gifts = useSelector(selectGifts);
   const game = useSelector(selectGame);
+  const currentTurn = useSelector(selectCurrentTurn);
   const upcomingTurns = useSelector(selectUpcomingTurns);
   const dispatch = useDispatch();
 
   const canOpenGifts =
     game.exchangingGifts &&
-    (game.hostId === fetchId() || upcomingTurns[0].playerId === fetchId());
+    (game.hostId === fetchId() || currentTurn.playerId === fetchId());
 
   if (!game.exchangingGifts) {
     return (
