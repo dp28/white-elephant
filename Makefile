@@ -1,4 +1,4 @@
-.PHONY: install clean test start build deploy
+.PHONY: install clean test start build deploy start_dev_server deploy_server
 
 ENVIRONMENT ?= local
 
@@ -14,13 +14,16 @@ start: node_modules
 	./bin/validate_environment && HTTPS=true yarn start
 
 start_dev_server: node_modules
-	npx peerjs --port 9000
+	cd server && npx peerjs --port 9000 --key white-elephant
 
 build: node_modules
 	./bin/validate_environment && yarn build
 
 deploy: build
 	aws s3 sync build/ s3://white-elephant.djpdev.com --acl public-read
+
+deploy_server:
+	git subtree push --prefix server/ heroku master
 
 node_modules: package.json
 	yarn install

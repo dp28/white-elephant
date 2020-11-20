@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-REQUIRED_ENV_VARS="HOSTNAME PORT"
+REQUIRED_ENV_VARS="HOSTNAME PORT SSL"
 ANY_MISSING=false
 
 if [[ "$ENVIRONMENT" = "local" ]] ; then

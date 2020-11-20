@@ -39,7 +39,5 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "peer": "^0.5.3"
-  }
+  "devDependencies": {}
 }
