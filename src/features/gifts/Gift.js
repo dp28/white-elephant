@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useSelector, useDispatch } from "react-redux";
 import { selectGift } from "./giftsSlice";
 import { selectImage } from "../images/imagesSlice";
-import { selectGame } from "../game/gameSlice";
+import { selectGame, GameStates } from "../game/gameSlice";
 import { Card, CardContent, CardMedia, Typography } from "@material-ui/core";
 import { openGift, selectCurrentTurn, stealGift } from "../turns/turnsSlice";
 import { fetchId } from "../../app/identity";
@@ -42,9 +42,12 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     width: "100%",
   },
+  giftName: {
+    fontWeight: "bold",
+  },
   ownerLabel: {
     fontSize: "1em",
-    color: theme.palette.grey[600],
+    fontStyle: "italic",
   },
   actionPrompt: {
     position: "absolute",
@@ -60,6 +63,10 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     cursor: "pointer",
   },
+  ownedBySelf: {
+    backgroundColor: theme.palette.primary.dark,
+    color: theme.palette.getContrastText(theme.palette.primary.dark),
+  },
 }));
 
 export function Gift({ id, openable = false }) {
@@ -71,10 +78,14 @@ export function Gift({ id, openable = false }) {
   const currentTurn = useSelector(selectCurrentTurn);
   const [emphasized, setEmphasized] = useState(false);
   const dispatch = useDispatch();
-  const canSteal = calculateCanSteal(currentTurn, gift, game.hostId);
+  const gameStarted = game.state === GameStates.STARTED;
+  const gameFinished = game.state === GameStates.FINISHED;
+  const canSteal =
+    gameStarted && calculateCanSteal(currentTurn, gift, game.hostId);
+  const ownedBySelf = owner?.id === fetchId();
 
   const whenCanInteract = (func) => (event) => {
-    if ((openable && gift.wrapped) || canSteal) {
+    if (gameStarted && ((openable && gift.wrapped) || canSteal)) {
       func(event);
     }
   };
@@ -132,10 +143,15 @@ export function Gift({ id, openable = false }) {
               />
             </div>
           )}
-          <CardContent className={classes.textContent}>
-            <Typography>{gift.name}</Typography>
+          <CardContent
+            className={`${classes.textContent} ${
+              ownedBySelf ? classes.ownedBySelf : ""
+            }`}
+          >
+            <Typography className={classes.giftName}>{gift.name}</Typography>
             <Typography className={classes.ownerLabel}>
-              Currently held by {owner.name}
+              {gameFinished ? "Belongs to" : "Currently held by"}{" "}
+              {ownedBySelf ? "you" : owner.name}
             </Typography>
           </CardContent>
         </>
@@ -145,7 +161,7 @@ export function Gift({ id, openable = false }) {
 }
 
 function calculateStyles(game, gift) {
-  if (game.exchangingGifts && gift.wrapped) {
+  if (game.state === GameStates.STARTED && gift.wrapped) {
     return { backgroundColor: gift.wrapping.colour };
   } else {
     return {};

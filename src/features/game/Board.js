@@ -4,7 +4,7 @@ import { Grid, Button, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { selectGifts } from "../gifts/giftsSlice";
 import { Gift } from "../gifts/Gift";
-import { selectGame, startExchangingGifts } from "./gameSlice";
+import { selectGame, startExchangingGifts, GameStates } from "./gameSlice";
 import { fetchId } from "../../app/identity";
 import { CurrentTurnNotification } from "../turns/CurrentTurnNotification";
 import { shuffle } from "../../utils/arrays";
@@ -44,10 +44,10 @@ export function Board() {
   const dispatch = useDispatch();
 
   const canOpenGifts =
-    game.exchangingGifts &&
+    game.state === GameStates.STARTED &&
     (game.hostId === fetchId() || currentTurn.currentPlayerId === fetchId());
 
-  if (!game.exchangingGifts) {
+  if (game.state === GameStates.WAITING) {
     return (
       <div className={classes.board}>
         <div className={classes.cover}>

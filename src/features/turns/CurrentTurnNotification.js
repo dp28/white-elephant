@@ -1,8 +1,15 @@
 import React from "react";
-import { Card, Typography, CardHeader, CardContent } from "@material-ui/core";
+import {
+  Card,
+  Typography,
+  CardHeader,
+  CardContent,
+  CardActions,
+  Button,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { useSelector } from "react-redux";
-import { selectGame } from "../game/gameSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { selectGame, finishGame, GameStates } from "../game/gameSlice";
 import { fetchId } from "../../app/identity";
 import { selectPlayer } from "../players/playersSlice";
 import { selectCurrentTurn } from "./turnsSlice";
@@ -18,13 +25,39 @@ export function CurrentTurnNotification() {
   const classes = useStyles();
   const currentTurn = useSelector(selectCurrentTurn);
   const player = useSelector(selectPlayer(currentTurn.currentPlayerId));
-  const isHost = fetchId() === useSelector(selectGame).hostId;
+  const game = useSelector(selectGame);
+  const gameFinished = game.state === GameStates.FINISHED;
+  const isHost = fetchId() === game.hostId;
+  const dispatch = useDispatch();
+
   const isSelf = player.id === fetchId();
+  const canFinishGame = currentTurn.wrappedGiftCount <= 0 && !gameFinished;
 
   const instructions = buildInstructions(currentTurn);
   const showStolenMessage = currentTurn.stolenGifts.length > 0;
 
-  if (isSelf) {
+  const finishGameButton = (
+    <CardActions>
+      <Button color="primary" onClick={() => dispatch(finishGame())}>
+        Finish game
+      </Button>
+    </CardActions>
+  );
+
+  if (gameFinished) {
+    return (
+      <Card className={classes.notification}>
+        <CardHeader title="Thanks for playing!" />
+        <CardContent>
+          <Typography>
+            All gifts have now been unwrapped and exchanged - hopefully you got
+            something you wanted. Or at least got something absolutely
+            ridiculous.
+          </Typography>
+        </CardContent>
+      </Card>
+    );
+  } else if (isSelf) {
     return (
       <Card className={classes.notification}>
         <CardHeader
@@ -35,6 +68,7 @@ export function CurrentTurnNotification() {
         <CardContent>
           <Typography>{instructions.currentPlayer}</Typography>
         </CardContent>
+        {canFinishGame && finishGameButton}
       </Card>
     );
   } else if (isHost) {
@@ -52,6 +86,7 @@ export function CurrentTurnNotification() {
             you {instructions.host}
           </Typography>
         </CardContent>
+        {canFinishGame && finishGameButton}
       </Card>
     );
   } else {

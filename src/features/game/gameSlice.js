@@ -6,6 +6,12 @@ import { buildRequest } from "../../communication/messages";
 import { addPlayer } from "../players/playersSlice";
 import { gameReducers } from "./gameActions";
 
+export const GameStates = {
+  WAITING: "WAITING",
+  STARTED: "STARTED",
+  FINISHED: "FINISHED",
+};
+
 export const gameSlice = createSlice({
   name: "game",
   initialState: {
@@ -14,7 +20,7 @@ export const gameSlice = createSlice({
   },
   reducers: {
     createGame: (state, action) => {
-      state.game = action.payload;
+      state.game = { ...action.payload, state: GameStates.WAITING };
     },
     startLoadingGame: (state, action) => {
       state.gameToJoin.loading = true;
@@ -52,7 +58,10 @@ export const gameSlice = createSlice({
     },
     ...gameReducers({
       startExchangingGifts: (state, action) => {
-        state.game.exchangingGifts = true;
+        state.game.state = GameStates.STARTED;
+      },
+      finishGame: (state, action) => {
+        state.game.state = GameStates.FINISHED;
       },
     }),
   },
@@ -66,6 +75,7 @@ export const {
   startLoadingGame,
   startJoiningGame,
   startExchangingGifts,
+  finishGame,
 } = gameSlice.actions;
 
 export const startGame = ({ host, name }) => (dispatch) => {

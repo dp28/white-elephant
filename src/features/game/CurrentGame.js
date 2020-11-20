@@ -9,7 +9,7 @@ import {
   CircularProgress,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { selectGame } from "./gameSlice";
+import { selectGame, GameStates } from "./gameSlice";
 import { Players } from "../players/Players";
 import { Board } from "./Board";
 import { selectPlayer } from "../players/playersSlice";
@@ -66,7 +66,7 @@ export function CurrentGame() {
           <Board />
         </Grid>
         <Grid item xs={12} sm={4} md={3}>
-          {game.exchangingGifts ? <UpcomingTurns /> : <Players />}
+          {game.state === GameStates.STARTED ? <UpcomingTurns /> : <Players />}
         </Grid>
       </Grid>
 
