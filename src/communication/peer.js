@@ -1,5 +1,7 @@
 import PeerJSPeer from "peerjs";
 import { fetchId } from "../app/identity";
+import store from "../app/store";
+import { addError } from "../features/errorAlerts/errorAlertsSlice";
 
 const Peer = createPeer();
 
@@ -15,6 +17,7 @@ function createPeer() {
   return new Promise((resolve, reject) => {
     peer.on("error", (error) => {
       console.error("Failed to connect to PeerJS server", error);
+      store.dispatch(addError({ message: error.toString() }));
       reject(error);
     });
 

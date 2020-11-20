@@ -6,6 +6,7 @@ import { Game } from "./features/game/Game";
 import { Connections } from "./features/connections/Connections";
 import { Images } from "./features/images/Images";
 import { fetchId } from "./app/identity";
+import { ErrorAlert } from "./features/errorAlerts/ErrorAlert";
 
 const useStyles = makeStyles((theme) => ({
   app: {
@@ -35,6 +36,7 @@ function App() {
       <Container className={classes.container}>
         <Game />
       </Container>
+      <ErrorAlert />
     </div>
   );
 }
