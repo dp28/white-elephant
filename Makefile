@@ -8,16 +8,16 @@ clean:
 	rm -rf node_modules build
 
 test: node_modules
-	REACT_APP_ENVIRONMENT=test yarn test
+	yarn test
 
 start: node_modules
-	REACT_APP_ENVIRONMENT=$(ENVIRONMENT) HTTPS=true yarn start
+	./bin/validate_environment && HTTPS=true yarn start
 
 start_dev_server: node_modules
-	REACT_APP_ENVIRONMENT=local npx peerjs --port 9000
+	npx peerjs --port 9000
 
 build: node_modules
-	REACT_APP_ENVIRONMENT=$(ENVIRONMENT) yarn build
+	./bin/validate_environment && yarn build
 
 deploy: build
 	aws s3 sync build/ s3://white-elephant.djpdev.com --acl public-read

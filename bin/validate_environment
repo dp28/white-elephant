@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+REQUIRED_ENV_VARS="HOSTNAME PORT"
+ANY_MISSING=false
+
+if [[ "$ENVIRONMENT" = "local" ]] ; then
+  echo "Using default environment"
+  exit 0
+fi
+
+for ENV_VAR in $REQUIRED_ENV_VARS ; do
+  qualified_env_var_name="REACT_APP_$ENV_VAR"
+
+  if [[ -z "${!qualified_env_var_name}" ]]; then
+    ANY_MISSING=true
+    echo "Missing environment variable: $qualified_env_var_name"
+  fi
+done
+
+if [[ "$ANY_MISSING" = true ]] ; then
+  exit 1
+fi
