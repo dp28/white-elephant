@@ -1,0 +1,13 @@
+{
+  "name": "server",
+  "version": "0.1.0",
+  "description": "PeerJS server for white-elephant",
+  "main": "index.js",
+  "repository": "https://github.com/dp28/white-elephant",
+  "author": "Daniel Patterson",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "peer": "^0.5.3"
+  }
+}
