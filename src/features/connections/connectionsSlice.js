@@ -4,6 +4,8 @@ export const CONNECTING = "CONNECTING";
 export const CONNECTED = "CONNECTED";
 export const DISCONNECTED = "DISCONNECTED";
 
+const DEFAULT_SECONDS_TO_CONNECT_ESTIMATE = 3;
+
 export const connectionsSlice = createSlice({
   name: "connections",
   initialState: {
@@ -11,7 +13,7 @@ export const connectionsSlice = createSlice({
     serverConnection: {
       status: CONNECTING,
       startedAtSecond: nowInSeconds(),
-      expectedSecondsToConnect: 5,
+      expectedSecondsToConnect: DEFAULT_SECONDS_TO_CONNECT_ESTIMATE,
     },
   },
   reducers: {
@@ -19,7 +21,7 @@ export const connectionsSlice = createSlice({
       state.serverConnection.status = CONNECTING;
       state.serverConnection.startedAtSecond = nowInSeconds();
       state.serverConnection.expectedSecondsToConnect =
-        action.payload.secondsToConnect || 5;
+        action.payload.secondsToConnect || DEFAULT_SECONDS_TO_CONNECT_ESTIMATE;
     },
     connectedToServer: (state, action) => {
       state.serverConnection.status = CONNECTED;
@@ -80,6 +82,9 @@ export const selectConnectionMap = (state) => state.connections.connectionsById;
 
 export const selectConnection = (id) => (state) =>
   state.connections.connectionsById[id];
+
+export const selectServerConnection = (state) =>
+  state.connections.serverConnection;
 
 export const isConnecting = (connection) => connection.status === CONNECTING;
 export const isConnected = (connection) => connection.status === CONNECTED;
