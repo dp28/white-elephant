@@ -46,7 +46,7 @@ const SECONDS_TO_WAIT_BEFORE_RECONNECTING = 60;
 
 async function attemptToRecoverFromConnectionError(error) {
   if (!idAlreadyTaken(error)) {
-    return error;
+    throw error;
   }
 
   // Client has changed network, so server hasn't registered a disconnect,
