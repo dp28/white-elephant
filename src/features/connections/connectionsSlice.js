@@ -8,8 +8,29 @@ export const connectionsSlice = createSlice({
   name: "connections",
   initialState: {
     connectionsById: {},
+    serverConnection: {
+      status: CONNECTING,
+      startedAtSecond: nowInSeconds(),
+      expectedSecondsToConnect: 5,
+    },
   },
   reducers: {
+    startConnectingToServer: (state, action) => {
+      state.serverConnection.status = CONNECTING;
+      state.serverConnection.startedAtSecond = nowInSeconds();
+      state.serverConnection.expectedSecondsToConnect =
+        action.payload.secondsToConnect || 5;
+    },
+    connectedToServer: (state, action) => {
+      state.serverConnection.status = CONNECTED;
+      state.serverConnection.startedAtSecond = null;
+      state.serverConnection.expectedSecondsToConnect = null;
+    },
+    disconnectedFromServer: (state, action) => {
+      state.serverConnection.status = DISCONNECTED;
+      state.serverConnection.startedAtSecond = null;
+      state.serverConnection.expectedSecondsToConnect = null;
+    },
     startConnecting: (state, action) => {
       setConnectionStatus({
         state,
@@ -43,6 +64,9 @@ export const connectionsSlice = createSlice({
 });
 
 export const {
+  startConnectingToServer,
+  connectedToServer,
+  disconnectedFromServer,
   startConnecting,
   addConnection,
   logConnectionError,
@@ -80,4 +104,8 @@ function fetchConnection(state, id) {
     state.connectionsById[id] = { id };
   }
   return state.connectionsById[id];
+}
+
+function nowInSeconds() {
+  return new Date().getTime() / 1000;
 }
