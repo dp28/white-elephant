@@ -5,6 +5,7 @@ const peerServer = PeerServer({
   key: "white-elephant",
   allow_discovery: false,
   secure: true,
+  alive_timeout: 60000, // Connections are destroyed after 1 minute of inactivity
 });
 
 peerServer.on("connection", (client) => console.log("Connected:", client.id));
