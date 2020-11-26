@@ -3,6 +3,8 @@
 REQUIRED_ENV_VARS="HOSTNAME PORT SSL"
 ANY_MISSING=false
 
+echo "Using environment '${ENVIRONMENT}'"
+
 if [[ "$ENVIRONMENT" = "local" ]] ; then
   echo "Using default environment"
   exit 0
