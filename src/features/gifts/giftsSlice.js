@@ -51,6 +51,10 @@ export const giftsSlice = createSlice({
         previousGift.ownerId = action.payload.fromPlayerId;
       }
     });
+
+    builder.addCase("game/startNewGame", (state) => {
+      state.giftsById = {};
+    });
   },
 });
 

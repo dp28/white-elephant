@@ -3,14 +3,16 @@ import { gameReducers } from "../game/gameActions";
 import { addPlayer } from "../players/playersSlice";
 import { startExchangingGifts } from "../game/gameSlice";
 
+const InitialState = {
+  currentTurn: null,
+  upcomingTurns: [],
+  hostId: null,
+  maxNumberOfStealsPerTurn: 3,
+};
+
 export const turnsSlice = createSlice({
   name: "turns",
-  initialState: {
-    currentTurn: null,
-    upcomingTurns: [],
-    hostId: null,
-    maxNumberOfStealsPerTurn: 3,
-  },
+  initialState: InitialState,
   reducers: gameReducers({
     stealGift: (state, action) => {
       if (
@@ -72,6 +74,13 @@ export const turnsSlice = createSlice({
         })
       );
       moveToNextTurn(state);
+    });
+
+    builder.addCase("game/startNewGame", (state) => {
+      state.currentTurn = InitialState.currentTurn;
+      state.upcomingTurns = InitialState.upcomingTurns;
+      state.hostId = InitialState.hostId;
+      state.maxNumberOfStealsPerTurn = InitialState.maxNumberOfStealsPerTurn;
     });
   },
 });

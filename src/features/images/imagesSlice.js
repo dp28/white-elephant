@@ -23,6 +23,10 @@ export const imagesSlice = createSlice({
         state.imagesById[image.id] = image;
       });
     });
+
+    builder.addCase("game/startNewGame", (state) => {
+      state.imagesById = {};
+    });
   },
 });
 
@@ -61,7 +65,7 @@ export const toReduxImage = (rtcImage) => {
     fileName,
     fileType,
     caption,
-    url: URL.createObjectURL(blob),
+    url: URL.createObjectURL(blob, { autoRevoke: false }),
   };
 };
 
@@ -75,7 +79,7 @@ export const createImage = ({ files, caption }) => {
     fileType: files[0].type,
     fileName: files[0].name,
     caption,
-    url: URL.createObjectURL(blob),
+    url: URL.createObjectURL(blob, { autoRevoke: false }),
   };
   return image;
 };

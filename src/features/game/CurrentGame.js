@@ -17,6 +17,7 @@ import { fetchId } from "../../app/identity";
 import Alert from "@material-ui/lab/Alert";
 import AlertTitle from "@material-ui/lab/AlertTitle";
 import { UpcomingTurns } from "../turns/UpcomingTurns";
+import { NewGameButton } from "./NewGameButton";
 
 const useStyles = makeStyles((theme) => ({
   spinner: {
@@ -37,6 +38,9 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 10000,
     padding: theme.spacing(3),
   },
+  title: {
+    flexGrow: 1,
+  },
 }));
 
 export function CurrentGame() {
@@ -56,7 +60,10 @@ export function CurrentGame() {
     <div className={classes.game}>
       <AppBar>
         <Toolbar>
-          <Typography variant="h6">{game.name}</Typography>
+          <Typography variant="h6" className={classes.title}>
+            {game.name}
+          </Typography>
+          <NewGameButton />
         </Toolbar>
       </AppBar>
       <div className={classes.offset} />

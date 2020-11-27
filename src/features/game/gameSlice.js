@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import cuid from "cuid";
-import { fetchId } from "../../app/identity";
 import { sendMessage } from "../messages/messagesSlice";
 import { buildRequest } from "../../communication/messages";
 import { addPlayer } from "../players/playersSlice";
@@ -12,12 +11,14 @@ export const GameStates = {
   FINISHED: "FINISHED",
 };
 
+const InitialState = {
+  game: null,
+  gameToJoin: { game: null, loading: false, error: null, joining: false },
+};
+
 export const gameSlice = createSlice({
   name: "game",
-  initialState: {
-    game: null,
-    gameToJoin: { game: null, loading: false, error: null, joining: false },
-  },
+  initialState: InitialState,
   reducers: {
     createGame: (state, action) => {
       state.game = { ...action.payload, state: GameStates.WAITING };
@@ -56,6 +57,10 @@ export const gameSlice = createSlice({
       state.gameToJoin.loading = false;
       state.gameToJoin.joining = false;
     },
+    startNewGame: (state) => {
+      state.game = InitialState.game;
+      state.gameToJoin = InitialState.gameToJoin;
+    },
     ...gameReducers({
       startExchangingGifts: (state, action) => {
         state.game.state = GameStates.STARTED;
@@ -76,6 +81,7 @@ export const {
   startJoiningGame,
   startExchangingGifts,
   finishGame,
+  startNewGame,
 } = gameSlice.actions;
 
 export const startGame = ({ host, name }) => (dispatch) => {
@@ -94,40 +100,8 @@ export const REQUEST_GAME_TO_JOIN = "REQUEST_GAME_TO_JOIN";
 export const JOIN_GAME = "JOIN_GAME";
 
 export const stopJoiningGame = () => (dispatch) => {
-  setURLSearchParams({ gameId: undefined, hostId: undefined });
+  clearGameURLSearchParams();
   dispatch(gameSlice.actions.stopJoining());
-};
-
-export const requestGameToJoin = () => (dispatch) => {
-  dispatch(startLoadingGame());
-  const { hostId, gameId } = loadGameDataFromURL();
-
-  if (!gameId || !hostId) {
-    console.debug("No game to join found in URL");
-    dispatch(stopJoiningGame());
-    return;
-  }
-
-  if (hostId === fetchId()) {
-    console.debug("Can't currently join self-hosted games");
-    dispatch(stopJoiningGame());
-    return;
-  }
-
-  dispatch(
-    sendMessage(
-      buildRequest({
-        to: hostId,
-        payload: {
-          type: REQUEST_GAME_TO_JOIN,
-          payload: {
-            playerId: fetchId(),
-            gameId,
-          },
-        },
-      })
-    )
-  );
 };
 
 export const joinGame = ({ player, image, gameId, hostId }) => (dispatch) => {
@@ -155,11 +129,8 @@ export const joinGame = ({ player, image, gameId, hostId }) => (dispatch) => {
   );
 };
 
-function loadGameDataFromURL() {
-  const queryParams = new URLSearchParams(window.location.search);
-  const hostId = queryParams.get("hostId");
-  const gameId = queryParams.get("gameId");
-  return { hostId, gameId };
+export function clearGameURLSearchParams() {
+  setURLSearchParams({ gameId: undefined, hostId: undefined });
 }
 
 function setURLSearchParams(params) {

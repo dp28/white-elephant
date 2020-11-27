@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import store from "./app/store";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import { requestGameToJoin } from "./features/game/gameSlice";
+import { loadGame } from "./features/game/loadOrJoinGame";
 import { listenForUnhandledErrors } from "./features/errorAlerts/globalListener";
 import "./index.css";
 
@@ -17,7 +17,7 @@ ReactDOM.render(
   document.getElementById("root")
 );
 
-store.dispatch(requestGameToJoin());
+store.dispatch(loadGame());
 listenForUnhandledErrors(store);
 
 // If you want your app to work offline and load faster, you can change

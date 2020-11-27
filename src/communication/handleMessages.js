@@ -10,7 +10,6 @@ import {
   convertImagesToReduxFormat,
   storeGiftImage,
   toReduxImage,
-  selectImages,
 } from "../features/images/imagesSlice";
 import {
   JOIN_GAME,
@@ -21,14 +20,12 @@ import {
   gameNotFound,
 } from "../features/game/gameSlice";
 import {
-  selectPlayersById,
   addPlayer,
   toReduxAddPlayerAction,
   selectPlayer,
 } from "../features/players/playersSlice";
 import { selectUsername } from "../features/username/usernameSlice";
-import { selectGiftsById } from "../features/gifts/giftsSlice";
-import { selectTurnsState } from "../features/turns/turnsSlice";
+import { selectGameState } from "../features/game/gameState";
 
 export function listen({ connection, store }) {
   connection.on("data", (messageInRTCFormat) => {
@@ -104,12 +101,7 @@ const ResponderMap = {
 };
 
 function buildSetGameState(state) {
-  const game = selectGame(state);
-  const playersById = selectPlayersById(state);
-  const giftsById = selectGiftsById(state);
-  const images = selectImages(state);
-  const turns = selectTurnsState(state);
-  return setGameState({ game, playersById, giftsById, images, turns });
+  return setGameState(selectGameState(state));
 }
 
 const DefaultResponder = (_state, request) => ({

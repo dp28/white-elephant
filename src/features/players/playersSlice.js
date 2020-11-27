@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { fetchId } from "../../app/identity";
 import { gameReducers } from "../game/gameActions";
 import { toRTCImage, toReduxImage } from "../images/imagesSlice";
-import { selectGame } from "../game/gameSlice";
 import cuid from "cuid";
 
 export const playersSlice = createSlice({
@@ -49,6 +48,12 @@ export const playersSlice = createSlice({
           player.connected = true;
         }
       },
+      hostConnected: (state, action) => {
+        const player = state.playersById[action.payload.hostId];
+        if (player) {
+          player.connected = true;
+        }
+      },
     }),
     hostDisconnected: (state, action) => {
       const player = state.playersById[action.payload.playerId];
@@ -61,6 +66,10 @@ export const playersSlice = createSlice({
     builder.addCase("game/setGameState", (state, action) => {
       state.playersById = action.payload.playersById;
     });
+
+    builder.addCase("game/startNewGame", (state) => {
+      state.playersById = {};
+    });
   },
 });
 
@@ -69,6 +78,7 @@ export const {
   updatePlayerName,
   playerDisconnected,
   playerReconnected,
+  hostConnected,
   hostDisconnected,
 } = playersSlice.actions;
 
