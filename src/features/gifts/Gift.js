@@ -4,7 +4,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectGift } from "./giftsSlice";
 import { selectImage } from "../images/imagesSlice";
 import { selectGame, GameStates } from "../game/gameSlice";
-import { Card, CardContent, CardMedia, Typography } from "@material-ui/core";
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  Divider,
+  Fade,
+  Slide,
+} from "@material-ui/core";
 import { openGift, selectCurrentTurn, stealGift } from "../turns/turnsSlice";
 import { fetchId } from "../../app/identity";
 import { selectPlayer } from "../players/playersSlice";
@@ -31,6 +39,9 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
   },
   wrapping: {
+    position: "absolute",
+    top: 0,
+    left: 0,
     height: "100%",
     width: "100%",
   },
@@ -105,63 +116,74 @@ export function Gift({ id, openable = false }) {
   };
 
   return (
-    <Card
-      className={classes.giftContainer}
-      raised={emphasized}
-      onMouseOver={whenCanInteract(() => setEmphasized(true))}
-    >
-      {emphasized && (
-        <div
-          className={classes.actionPrompt}
-          onClick={performAction}
-          onMouseOut={() => setEmphasized(false)}
+    <>
+      <Card
+        className={classes.giftContainer}
+        raised={emphasized}
+        onMouseOver={whenCanInteract(() => setEmphasized(true))}
+      >
+        <Slide
+          direction="right"
+          in={gift.wrapped}
+          appear={true}
+          exit={true}
+          timeout={{
+            enter: 0,
+            exit: 1000,
+          }}
         >
-          <Card className={classes.actionPromptInner}>
-            <Typography>
-              {canSteal ? `Steal ${gift.name} from ${owner.name}` : "Open"}
-            </Typography>
-          </Card>
-        </div>
-      )}
-
-      {gift.wrapped && (
-        <div className={classes.actionArea}>
           <div
             className={classes.wrapping}
             style={calculateStyles(game, gift)}
           ></div>
-        </div>
-      )}
-      {!gift.wrapped && (
-        <>
-          {image && (
-            <div className={classes.imageWrapper}>
-              <CardMedia
-                image={image.url}
-                title={gift.name}
-                className={classes.image}
-              />
-            </div>
-          )}
-          <CardContent
-            className={`${classes.textContent} ${
-              ownedBySelf ? classes.ownedBySelf : ""
-            }`}
+        </Slide>
+
+        <Fade in={emphasized}>
+          <div
+            className={classes.actionPrompt}
+            onClick={performAction}
+            onMouseOut={() => setEmphasized(false)}
           >
-            <Typography className={classes.giftName}>{gift.name}</Typography>
-            <Typography className={classes.ownerLabel}>
-              {gameFinished ? "Belongs to" : "Currently held by"}{" "}
-              {ownedBySelf ? "you" : owner.name}
-            </Typography>
-          </CardContent>
-        </>
-      )}
-    </Card>
+            <Card className={classes.actionPromptInner}>
+              <Typography>
+                {canSteal ? `Steal ${gift.name} from ${owner.name}` : "Open"}
+              </Typography>
+            </Card>
+          </div>
+        </Fade>
+
+        {!gift.wrapped && (
+          <>
+            {image && (
+              <div className={classes.imageWrapper}>
+                <CardMedia
+                  image={image.url}
+                  title={gift.name}
+                  className={classes.image}
+                />
+                <Divider />
+              </div>
+            )}
+            <CardContent
+              className={`${classes.textContent} ${
+                ownedBySelf ? classes.ownedBySelf : ""
+              }`}
+            >
+              <Typography className={classes.giftName}>{gift.name}</Typography>
+              <Typography className={classes.ownerLabel}>
+                {gameFinished ? "Belongs to" : "Currently held by"}{" "}
+                {ownedBySelf ? "you" : owner.name}
+              </Typography>
+            </CardContent>
+          </>
+        )}
+      </Card>
+    </>
   );
 }
 
 function calculateStyles(game, gift) {
-  if (game.state === GameStates.STARTED && gift.wrapped) {
+  if (game.state === GameStates.STARTED) {
     return { backgroundColor: gift.wrapping.colour };
   } else {
     return {};
