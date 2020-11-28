@@ -12,6 +12,7 @@ const useStyles = makeStyles((theme) => ({
     left: "10%",
     width: "80%",
     opacity: 0.85,
+    zIndex: 20000,
   },
   error: {
     position: "relative",

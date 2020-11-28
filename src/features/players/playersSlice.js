@@ -85,6 +85,11 @@ export const {
 export const selectPlayers = (state) =>
   Object.values(state.players.playersById);
 
+export const selectRemotePlayerConnectionIds = (state) =>
+  selectPlayers(state)
+    .filter((player) => player.id !== fetchId())
+    .map((player) => player.connectionId);
+
 export const selectPlayersById = (state) => state.players.playersById;
 export const selectPlayer = (id) => (state) => state.players.playersById[id];
 

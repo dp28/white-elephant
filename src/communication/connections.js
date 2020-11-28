@@ -18,7 +18,7 @@ import { selectGame } from "../features/game/gameSlice";
 
 export async function buildConnections(store) {
   const peer = await getPeer();
-  const connections = {};
+  const connectionPromises = {};
 
   const dispatchPlayerDisconnected = (connectionId) => {
     const hostId = selectGame(store.getState())?.hostId;
@@ -31,42 +31,50 @@ export async function buildConnections(store) {
 
   const startListening = ({ connection, connectionId }) => {
     console.debug("adding connection", connectionId);
-    connections[connectionId] = connection;
-    listen({ connection, store });
 
-    connection.on("open", () => {
-      console.debug("Connected to", connectionId);
-      store.dispatch(addConnection({ id: connectionId }));
-      if (selectPlayer(connectionId)(store.getState())) {
-        store.dispatch(playerReconnected({ playerId: connectionId }));
-      }
+    connectionPromises[connectionId] = new Promise((resolve, reject) => {
+      listen({ connection, store });
+
+      connection.on("open", () => {
+        console.debug("Connected to", connectionId);
+        store.dispatch(addConnection({ id: connectionId }));
+        if (selectPlayer(connectionId)(store.getState())) {
+          store.dispatch(playerReconnected({ playerId: connectionId }));
+        }
+        resolve(connection);
+      });
+
+      connection.on("error", (error) => {
+        console.error("Failed to connect", error);
+        delete connectionPromises[connectionId];
+        store.dispatch(logConnectionError({ id: connectionId }));
+        dispatchPlayerDisconnected(connectionId);
+        reject(error);
+      });
+
+      connection.on("close", () => {
+        console.debug("Closed", connectionId);
+        delete connectionPromises[connectionId];
+        store.dispatch(disconnect({ id: connectionId }));
+        dispatchPlayerDisconnected(connectionId);
+        reject(new Error(`Player ${connectionId} diconnected`));
+      });
     });
 
-    connection.on("error", (error) => {
-      console.error("Failed to connect", error);
-      delete connections[connectionId];
-      store.dispatch(logConnectionError({ id: connectionId }));
-      dispatchPlayerDisconnected(connectionId);
-    });
-
-    connection.on("close", () => {
-      console.debug("Closed", connectionId);
-      delete connections[connectionId];
-      store.dispatch(disconnect({ id: connectionId }));
-      dispatchPlayerDisconnected(connectionId);
-    });
+    return connectionPromises[connectionId];
   };
 
-  const connect = (id) => {
+  const connect = async (id) => {
     console.debug("Connecting to", id);
+    const existingConnection = await connectionPromises[id];
 
-    if (connections[id]) {
+    if (existingConnection?.open) {
       console.debug("Already connected to", id);
-      return Promise.resolve(connections[id]);
+      return existingConnection;
     }
 
     if (id === fetchId()) {
-      return Promise.reject(new Error("Can't connect to self"));
+      throw new Error("Can't connect to self");
     }
 
     store.dispatch(startConnecting(id));
@@ -76,17 +84,7 @@ export async function buildConnections(store) {
       reliable: true,
     });
 
-    const result = new Promise((resolve, reject) => {
-      connection.on("open", () => {
-        resolve(connection);
-      });
-
-      connection.on("error", reject);
-    });
-
-    startListening({ connection, connectionId: id });
-
-    return result;
+    return startListening({ connection, connectionId: id });
   };
 
   const send = async (id, message) => {
@@ -96,16 +94,18 @@ export async function buildConnections(store) {
   };
 
   const broadcast = (message) => {
-    console.debug("Broadcasting", message, "to", Object.keys(connections));
-    Object.values(connections).forEach((connection) => {
-      connection.send(message);
+    console.debug(
+      "Broadcasting",
+      message,
+      "to",
+      Object.keys(connectionPromises)
+    );
+    Object.keys(connectionPromises).forEach((id) => {
+      send(id, message);
     });
   };
 
-  const relay = (message) => {
-    const connectionIds = Object.keys(connections).filter(
-      (id) => id !== message.except
-    );
+  const relay = (connectionIds, message) => {
     console.debug("Relaying", message, "to", connectionIds);
     connectionIds.forEach((connectionId) => {
       send(connectionId, message);

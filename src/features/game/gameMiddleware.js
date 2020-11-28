@@ -8,6 +8,7 @@ import {
 import { fetchId } from "../../app/identity";
 import { relayMessage, sendMessage } from "../messages/messagesSlice";
 import { persistGameState, clearPersistedGameState } from "./gameState";
+import { selectRemotePlayerConnectionIds } from "../players/playersSlice";
 
 export const gameMiddleware = (store) => {
   const selfId = fetchId();
@@ -33,8 +34,11 @@ export const gameMiddleware = (store) => {
 
     if (selfId === hostId) {
       console.debug("Forwarding game action to all players", action);
+      const otherPlayerIds = selectRemotePlayerConnectionIds(rootState).filter(
+        (id) => id !== action.meta.from
+      );
       store.dispatch(
-        relayMessage(buildRelay({ payload: action, except: action.meta.from }))
+        relayMessage(buildRelay({ to: otherPlayerIds, payload: action }))
       );
 
       console.debug("Persisting game state");

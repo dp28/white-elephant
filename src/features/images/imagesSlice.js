@@ -47,7 +47,7 @@ export const toReduxStoreImageAction = (storeImageAction) => {
 
 export const toRTCImage = async (reduxImage) => {
   const { id, fileName, fileType, caption, url } = reduxImage;
-  const data = await fetch(url).then((r) => r.blob());
+  const data = await toBlobOrNull(url);
   return {
     id,
     fileName,
@@ -57,15 +57,24 @@ export const toRTCImage = async (reduxImage) => {
   };
 };
 
+async function toBlobOrNull(url) {
+  try {
+    return await fetch(url).then((r) => r.blob());
+  } catch (error) {
+    console.error("Failed to convert URL to Blob:", error);
+    return null;
+  }
+}
+
 export const toReduxImage = (rtcImage) => {
   const { id, fileName, fileType, caption, data } = rtcImage;
-  const blob = new Blob([data], { type: fileType });
+  const blob = data && new Blob([data], { type: fileType });
   return {
     id,
     fileName,
     fileType,
     caption,
-    url: URL.createObjectURL(blob, { autoRevoke: false }),
+    url: blob && URL.createObjectURL(blob, { autoRevoke: false }),
   };
 };
 

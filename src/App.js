@@ -5,7 +5,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Game } from "./features/game/Game";
 import { Connections } from "./features/connections/Connections";
 import { ConnectionProgress } from "./features/connections/ConnectionProgress";
-import { Images } from "./features/images/Images";
 import { fetchId } from "./app/identity";
 import { ErrorAlert } from "./features/errorAlerts/ErrorAlert";
 
@@ -24,7 +23,6 @@ function Debug() {
     <div>
       Client id: {fetchId()}
       <Connections />
-      <Images />
     </div>
   );
 }

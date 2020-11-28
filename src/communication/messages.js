@@ -35,7 +35,6 @@ export const buildResponse = ({ request, payload, containsAction = true }) => ({
 export const buildBroadcast = ({ payload, containsAction = true }) =>
   buildMessage({ type: BROADCAST, payload, containsAction });
 
-export const buildRelay = ({ payload, containsAction = true, except }) => ({
-  ...buildMessage({ type: RELAY, payload, containsAction }),
-  except,
+export const buildRelay = ({ payload, containsAction = true, to }) => ({
+  ...buildMessage({ type: RELAY, to, payload, containsAction }),
 });

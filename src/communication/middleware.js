@@ -34,7 +34,7 @@ async function sendMessage(action, connectionsPromise) {
   const connections = await connectionsPromise;
   switch (action.type) {
     case RELAY_MESSAGE:
-      connections.relay(message);
+      connections.relay(action.payload.to, message);
       break;
     case BROADCAST_MESSAGE:
       connections.broadcast(message);
