@@ -2,18 +2,17 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Grid, Button, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { selectGifts } from "../gifts/giftsSlice";
+import { selectGifts, selectFocusedGift } from "../gifts/giftsSlice";
 import { Gift } from "../gifts/Gift";
 import { selectGame, startExchangingGifts, GameStates } from "./gameSlice";
 import { fetchId } from "../../app/identity";
-import { CurrentTurnNotification } from "../turns/CurrentTurnNotification";
 import { shuffle } from "../../utils/arrays";
 import { selectUpcomingTurns, selectCurrentTurn } from "../turns/turnsSlice";
+import { FocusedGift } from "../gifts/FocusedGift";
 
 const useStyles = makeStyles((theme) => ({
   board: {
-    height: "100%",
-    width: "100%",
+    flexGrow: 1,
     position: "relative",
   },
   offset: theme.mixins.toolbar,
@@ -41,9 +40,11 @@ export function Board() {
   const game = useSelector(selectGame);
   const currentTurn = useSelector(selectCurrentTurn);
   const upcomingTurns = useSelector(selectUpcomingTurns);
+  const focusedGift = useSelector(selectFocusedGift);
+  console.log(focusedGift);
   const dispatch = useDispatch();
 
-  const canOpenGifts =
+  const currentPlayerCanTakeTurn =
     game.state === GameStates.STARTED &&
     (game.hostId === fetchId() || currentTurn.currentPlayerId === fetchId());
 
@@ -85,15 +86,18 @@ export function Board() {
   return (
     <div className={classes.board}>
       <Grid container spacing={1} className={classes.content}>
-        <Grid item xs={12}>
-          <CurrentTurnNotification />
-        </Grid>
         {gifts.map((gift) => (
           <Grid key={gift.id} item xs={12} sm={6} md={4}>
-            <Gift id={gift.id} openable={canOpenGifts} />
+            <Gift id={gift.id} interactive={currentPlayerCanTakeTurn} />
           </Grid>
         ))}
       </Grid>
+      {focusedGift && (
+        <FocusedGift
+          gift={focusedGift}
+          interactive={currentPlayerCanTakeTurn}
+        />
+      )}
     </div>
   );
 }

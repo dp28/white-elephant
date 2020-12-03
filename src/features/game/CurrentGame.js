@@ -18,6 +18,7 @@ import Alert from "@material-ui/lab/Alert";
 import AlertTitle from "@material-ui/lab/AlertTitle";
 import { UpcomingTurns } from "../turns/UpcomingTurns";
 import { NewGameButton } from "./NewGameButton";
+import { CurrentTurnNotification } from "../turns/CurrentTurnNotification";
 
 const useStyles = makeStyles((theme) => ({
   spinner: {
@@ -70,6 +71,7 @@ export function CurrentGame() {
 
       <Grid container spacing={3} className={classes.content}>
         <Grid item xs={12} sm={8} md={9}>
+          {game.state !== GameStates.WAITING && <CurrentTurnNotification />}
           <Board />
         </Grid>
         <Grid item xs={12} sm={4} md={3}>

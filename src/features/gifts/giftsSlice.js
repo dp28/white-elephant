@@ -8,8 +8,16 @@ export const giftsSlice = createSlice({
   name: "gifts",
   initialState: {
     giftsById: {},
+    focusedGiftId: null,
   },
-  reducers: {},
+  reducers: {
+    focusOnGift: (state, action) => {
+      state.focusedGiftId = action.payload.giftId;
+    },
+    stopFocusingOnGift: (state) => {
+      state.focusedGiftId = null;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase("game/setGameState", (state, action) => {
       state.giftsById = action.payload.giftsById;
@@ -29,18 +37,21 @@ export const giftsSlice = createSlice({
     });
 
     builder.addCase(startExchangingGifts, (state, action) => {
+      state.focusedGiftId = null;
       action.payload.orderedGiftIds.forEach((giftId, index) => {
         state.giftsById[giftId].ordering = index;
       });
     });
 
     builder.addCase(openGift, (state, action) => {
+      state.focusedGiftId = null;
       const gift = state.giftsById[action.payload.giftId];
       gift.wrapped = false;
       gift.ownerId = action.payload.forPlayerId;
     });
 
     builder.addCase(stealGift, (state, action) => {
+      state.focusedGiftId = null;
       const previousGift = Object.values(state.giftsById).find(
         (otherGift) => otherGift.ownerId === action.payload.forPlayerId
       );
@@ -54,13 +65,18 @@ export const giftsSlice = createSlice({
 
     builder.addCase("game/startNewGame", (state) => {
       state.giftsById = {};
+      state.focusedGiftId = null;
     });
   },
 });
+
+export const { focusOnGift, stopFocusingOnGift } = giftsSlice.actions;
 
 export const selectGifts = (state) =>
   sortByOrdering(Object.values(state.gifts.giftsById));
 export const selectGiftsById = (state) => state.gifts.giftsById;
 export const selectGift = (id) => (state) => state.gifts.giftsById[id];
+export const selectFocusedGift = (state) =>
+  state.gifts.giftsById[state.gifts.focusedGiftId];
 
 export default giftsSlice.reducer;
