@@ -56,7 +56,6 @@ const useStyles = makeStyles((theme) => ({
 export function GiftInput({ onGiftChange }) {
   const classes = useStyles();
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
   const [colour, setColour] = useState(generateRandomColour());
   const [showColourPicker, setShowColourPicker] = useState(false);
@@ -73,14 +72,13 @@ export function GiftInput({ onGiftChange }) {
   useEffect(() => {
     const gift = {
       name,
-      description,
       imageId: image?.id,
       wrapping: { colour },
     };
     if (isValidGiftInput(gift)) {
       onGiftChange(gift);
     }
-  }, [name, onGiftChange, description, image, colour]);
+  }, [name, onGiftChange, image, colour]);
 
   return (
     <div className={classes.container}>
@@ -153,17 +151,6 @@ export function GiftInput({ onGiftChange }) {
           />
         )}
       </div>
-
-      <TextField
-        label="Gift description"
-        multiline
-        className={classes.item}
-        value={description}
-        onChange={(event) => setDescription(event.target.value)}
-        required={false}
-        margin="normal"
-        helperText="Optional - any extra details you'd like to add"
-      />
     </div>
   );
 }
