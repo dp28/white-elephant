@@ -9,6 +9,7 @@ import { fetchId } from "../../app/identity";
 import { shuffle } from "../../utils/arrays";
 import { selectUpcomingTurns, selectCurrentTurn } from "../turns/turnsSlice";
 import { FocusedGift } from "../gifts/FocusedGift";
+import { useGiftGrid } from "./useGiftGrid";
 
 const useStyles = makeStyles((theme) => ({
   board: {
@@ -18,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
   offset: theme.mixins.toolbar,
   content: {
     marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    display: "flex",
+    flexWrap: "wrap",
   },
   cover: {
     position: "absolute",
@@ -32,6 +36,9 @@ const useStyles = makeStyles((theme) => ({
   text: {
     margin: theme.spacing(3),
   },
+  gift: {
+    margin: theme.spacing(1),
+  },
 }));
 
 export function Board() {
@@ -41,7 +48,7 @@ export function Board() {
   const currentTurn = useSelector(selectCurrentTurn);
   const upcomingTurns = useSelector(selectUpcomingTurns);
   const focusedGift = useSelector(selectFocusedGift);
-  console.log(focusedGift);
+  const [giftDimensions, giftGridRef] = useGiftGrid(gifts.length);
   const dispatch = useDispatch();
 
   const currentPlayerCanTakeTurn =
@@ -84,14 +91,21 @@ export function Board() {
   }
 
   return (
-    <div className={classes.board}>
-      <Grid container spacing={1} className={classes.content}>
+    <div className={classes.board} ref={giftGridRef}>
+      <div className={classes.content}>
         {gifts.map((gift) => (
-          <Grid key={gift.id} item xs={12} sm={6} md={4} lg={3}>
+          <div
+            key={gift.id}
+            className={classes.gift}
+            style={{
+              width: giftDimensions.width,
+              height: giftDimensions.height,
+            }}
+          >
             <Gift id={gift.id} interactive={currentPlayerCanTakeTurn} />
-          </Grid>
+          </div>
         ))}
-      </Grid>
+      </div>
       {focusedGift && (
         <FocusedGift
           gift={focusedGift}

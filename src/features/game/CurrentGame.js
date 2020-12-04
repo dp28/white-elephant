@@ -26,14 +26,20 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
   },
   game: {
-    height: "100%",
     width: "100%",
     background: theme.palette.grey[100],
+    height: "100vh",
   },
   offset: theme.mixins.toolbar,
+  boardContainer: {
+    display: "flex",
+    flexDirection: "column",
+    overflowY: "auto",
+    background: theme.palette.grey[100],
+  },
   content: {
     marginTop: theme.spacing(1),
-    height: `calc(100% - ${theme.spacing(1)}px - 64px)`,
+    height: `calc(100vh - ${theme.spacing(1)}px - 64px)`,
   },
   backdrop: {
     zIndex: 10000,
@@ -70,11 +76,11 @@ export function CurrentGame() {
       <div className={classes.offset} />
 
       <Grid container spacing={3} className={classes.content}>
-        <Grid item xs={12} sm={8} md={9}>
+        <Grid item xs={12} sm={8} md={9} className={classes.boardContainer}>
           {game.state !== GameStates.WAITING && <CurrentTurnNotification />}
           <Board />
         </Grid>
-        <Grid item xs={12} sm={4} md={3}>
+        <Grid item xs={12} sm={4} md={3} className={classes.playersContainer}>
           {game.state === GameStates.STARTED ? <UpcomingTurns /> : <Players />}
         </Grid>
       </Grid>
