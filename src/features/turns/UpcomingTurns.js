@@ -10,6 +10,11 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.grey[100],
     padding: theme.spacing(1),
   },
+  subtitle: {
+    color: theme.palette.grey[800],
+    marginBottom: theme.spacing(1),
+    fontStyle: "italic",
+  },
 }));
 
 export function UpcomingTurns() {
@@ -19,6 +24,9 @@ export function UpcomingTurns() {
   return (
     <Paper elevation={0} className={classes.turns}>
       <Typography variant="h6">Upcoming Turns</Typography>
+      <Typography className={classes.subtitle}>
+        {turns.length} remaining
+      </Typography>
       {turns.map((turn) => (
         <Turn turn={turn} key={turn.index} />
       ))}
