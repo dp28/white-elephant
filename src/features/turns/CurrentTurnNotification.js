@@ -31,6 +31,7 @@ export function CurrentTurnNotification() {
   const dispatch = useDispatch();
 
   const isSelf = player.id === fetchId();
+  const isOffline = !player.connectionId;
   const canFinishGame = currentTurn.wrappedGiftCount <= 0 && !gameFinished;
 
   const instructions = buildInstructions(currentTurn);
@@ -80,11 +81,19 @@ export function CurrentTurnNotification() {
           }`}
         />
         <CardContent>
-          <Typography>
-            As the host, you can either wait for {player.name} to take their
-            turn or you can take it for them. If you decide to take it for them,
-            you {instructions.host}
-          </Typography>
+          {isOffline ? (
+            <Typography>
+              {player.name} can't take their turn themselves - as host, you need
+              to take it for them. Ask {player.name} what they'd like to do -
+              they {instructions.host}
+            </Typography>
+          ) : (
+            <Typography>
+              As the host, you can either wait for {player.name} to take their
+              turn or you can take it for them. If you decide to take it for
+              them, you {instructions.host}
+            </Typography>
+          )}
         </CardContent>
         {canFinishGame && finishGameButton}
       </Card>
