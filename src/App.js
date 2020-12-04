@@ -10,11 +10,11 @@ import { ErrorAlert } from "./features/errorAlerts/ErrorAlert";
 
 const useStyles = makeStyles((theme) => ({
   app: {
-    height: "100%",
+    minHeight: "100%",
     background: theme.palette.grey[100],
   },
   container: {
-    height: "100%",
+    minHeight: "100vh",
   },
 }));
 

@@ -21,6 +21,7 @@ server/node_modules
 .env.production.local
 
 bin/deploy_to_prod
+test_data/
 
 *npm-debug.log*
 *yarn-debug.log*
