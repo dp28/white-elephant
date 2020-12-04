@@ -87,7 +87,7 @@ export function Board() {
     <div className={classes.board}>
       <Grid container spacing={1} className={classes.content}>
         {gifts.map((gift) => (
-          <Grid key={gift.id} item xs={12} sm={6} md={4}>
+          <Grid key={gift.id} item xs={12} sm={6} md={4} lg={3}>
             <Gift id={gift.id} interactive={currentPlayerCanTakeTurn} />
           </Grid>
         ))}

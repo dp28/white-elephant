@@ -32,7 +32,7 @@ function App() {
   return (
     <div className={classes.app}>
       <CssBaseline />
-      <Container className={classes.container}>
+      <Container className={classes.container} maxWidth={false}>
         <Game />
       </Container>
       <ConnectionProgress />
