@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function GiftInput({ onGiftChange }) {
+export function GiftInput({ onGiftChange, forCurrentUser = true }) {
   const classes = useStyles();
   const [name, setName] = useState("");
   const [image, setImage] = useState(null);
@@ -83,11 +83,11 @@ export function GiftInput({ onGiftChange }) {
   return (
     <div className={classes.container}>
       <Typography variant="h6" className={classes.item}>
-        Your gift
+        {forCurrentUser ? "Your gift" : "The player's gift"}
       </Typography>
       <Typography className={classes.item}>
-        You need to add a gift to join the game. Don't tell anyone what you've
-        added, at least until after it's been revealed!
+        Every player needs to add a gift to join the game. Don't tell anyone
+        what you've added, at least until after it's been revealed!
       </Typography>
       <TextField
         label="Gift name"

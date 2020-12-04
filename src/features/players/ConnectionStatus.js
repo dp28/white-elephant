@@ -17,6 +17,9 @@ const useStyles = makeStyles((theme) => ({
   disconnected: {
     background: theme.palette.error.main,
   },
+  offline: {
+    background: theme.palette.grey[500],
+  },
 }));
 
 export function ConnectionStatus({ player }) {
@@ -37,7 +40,12 @@ function calculateContent(player, classes) {
     return null;
   } else if (player.connected) {
     return { className: classes.connected, message: "Connected" };
+  } else if (!player.connectionId) {
+    return {
+      className: classes.offline,
+      message: "Offline - controlled by host",
+    };
   } else {
-    return { className: classes.disconnected, message: "Disonnected" };
+    return { className: classes.disconnected, message: "Disconnected" };
   }
 }

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Card, CardActions, Button, Snackbar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Alert from "@material-ui/lab/Alert";
+import { AddOfflinePlayer } from "./AddOfflinePlayer";
 
 const useStyles = makeStyles((theme) => ({
   addPlayers: {
@@ -19,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
 export function AddPlayers() {
   const classes = useStyles();
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showOfflinePlayerForm, setShowOfflinePlayerForm] = useState(false);
 
   const hideMessage = () => setShowSuccess(false);
 
@@ -36,6 +38,12 @@ export function AddPlayers() {
           <Button color="primary" onClick={copyUrlToClipboard}>
             Copy invite link
           </Button>
+          <Button
+            color="primary"
+            onClick={() => setShowOfflinePlayerForm(true)}
+          >
+            Add offline player
+          </Button>
         </CardActions>
       </Card>
       <Snackbar
@@ -47,6 +55,9 @@ export function AddPlayers() {
           Invite link copied!
         </Alert>
       </Snackbar>
+      {showOfflinePlayerForm && (
+        <AddOfflinePlayer onClose={() => setShowOfflinePlayerForm(false)} />
+      )}
     </div>
   );
 }
