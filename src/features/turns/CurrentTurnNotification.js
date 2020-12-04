@@ -6,8 +6,12 @@ import {
   CardContent,
   CardActions,
   Button,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { useSelector, useDispatch } from "react-redux";
 import { selectGame, finishGame, GameStates } from "../game/gameSlice";
 import { fetchId } from "../../app/identity";
@@ -18,6 +22,12 @@ const useStyles = makeStyles((theme) => ({
   notification: {
     marginBottom: theme.spacing(1),
     paddingRight: theme.spacing(1),
+  },
+  title: {
+    fontSize: "1.5rem",
+    lineHeight: "3rem",
+    fontWeight: 500,
+    flexGrow: 1,
   },
 }));
 
@@ -39,7 +49,11 @@ export function CurrentTurnNotification() {
 
   const finishGameButton = (
     <CardActions>
-      <Button color="primary" onClick={() => dispatch(finishGame())}>
+      <Button
+        color="primary"
+        onClick={() => dispatch(finishGame())}
+        className={classes.finishGameButton}
+      >
         Finish game
       </Button>
     </CardActions>
@@ -60,27 +74,36 @@ export function CurrentTurnNotification() {
     );
   } else if (isSelf) {
     return (
-      <Card className={classes.notification}>
-        <CardHeader
-          title={`It's your turn${
-            showStolenMessage ? " because your gift was stolen!" : "!"
-          }`}
-        />
-        <CardContent>
+      <Accordion defaultExpanded className={classes.notification}>
+        <AccordionSummary
+          className={classes.header}
+          expandIcon={<ExpandMoreIcon />}
+        >
+          <Typography className={classes.title}>
+            It's your turn
+            {showStolenMessage ? " because your gift was stolen!" : "!"}
+          </Typography>
+          {canFinishGame && finishGameButton}
+        </AccordionSummary>
+        <AccordionDetails>
           <Typography>{instructions.currentPlayer}</Typography>
-        </CardContent>
-        {canFinishGame && finishGameButton}
-      </Card>
+        </AccordionDetails>
+      </Accordion>
     );
   } else if (isHost) {
     return (
-      <Card className={classes.notification}>
-        <CardHeader
-          title={`It's ${player.name}'s turn${
-            showStolenMessage ? " because their gift was stolen" : ""
-          }`}
-        />
-        <CardContent>
+      <Accordion defaultExpanded className={classes.notification}>
+        <AccordionSummary
+          className={classes.header}
+          expandIcon={<ExpandMoreIcon />}
+        >
+          <Typography className={classes.title}>
+            It's {player.name}'s turn
+            {showStolenMessage ? " because their gift was stolen" : ""}
+          </Typography>
+          {canFinishGame && finishGameButton}
+        </AccordionSummary>
+        <AccordionDetails>
           {isOffline ? (
             <Typography>
               {player.name} can't take their turn themselves - as host, you need
@@ -94,22 +117,25 @@ export function CurrentTurnNotification() {
               them, you {instructions.host}
             </Typography>
           )}
-        </CardContent>
-        {canFinishGame && finishGameButton}
-      </Card>
+        </AccordionDetails>
+      </Accordion>
     );
   } else {
     return (
-      <Card className={classes.notification}>
-        <CardHeader
-          title={`It's ${player.name}'s turn${
-            showStolenMessage ? " because their gift was stolen" : ""
-          }`}
-        />
-        <CardContent>
+      <Accordion defaultExpanded className={classes.notification}>
+        <AccordionSummary
+          className={classes.header}
+          expandIcon={<ExpandMoreIcon />}
+        >
+          <Typography className={classes.title}>
+            It's {player.name}'s turn
+            {showStolenMessage ? " because their gift was stolen" : ""}
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
           <Typography>{instructions.otherPlayers}</Typography>
-        </CardContent>
-      </Card>
+        </AccordionDetails>
+      </Accordion>
     );
   }
 }
