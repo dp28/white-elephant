@@ -18,13 +18,13 @@ export const useGiftGrid = (giftCount) => {
         return null;
       }
       const bounds = element.getBoundingClientRect();
-      const boardWidth = bounds.width;
+      const boardWidth = bounds.width - 4 * GiftMargin;
       const bottom = bounds.height + bounds.y;
 
       const boardHeight =
         bottom < windowHeight
           ? bounds.height
-          : windowHeight - bounds.y - 2 * GiftMargin;
+          : windowHeight - bounds.y - 4 * GiftMargin;
 
       const dimensions = calculateGiftDimensions({
         boardWidth,
@@ -65,14 +65,24 @@ function calculateGiftDimensions({ boardWidth, boardHeight, giftCount }) {
 
   const numberOfGiftsInSquareArea = giftCount * (smallestSide / largestSide);
   const giftsOnSmallSide = Math.ceil(Math.sqrt(numberOfGiftsInSquareArea));
-  const giftSideSize = Math.floor(smallestSide / giftsOnSmallSide);
+  const giftSideSize =
+    Math.floor(smallestSide / giftsOnSmallSide) - GiftMargin * 2;
 
-  if (giftSideSize < MinimumGiftSideSizeWithMargin) {
+  console.log({
+    giftSideSize,
+    smallestSide,
+    largestSide,
+    boardWidth,
+    boardHeight,
+    giftCount,
+  });
+
+  if (giftSideSize < MinimumGiftSideSize) {
     return { width: MinimumGiftSideSize, height: MinimumGiftSideSize };
   } else {
     return {
-      width: giftSideSize - GiftMargin * 2,
-      height: giftSideSize - GiftMargin * 2,
+      width: giftSideSize,
+      height: giftSideSize,
     };
   }
 }
