@@ -21,7 +21,7 @@ export function Players() {
 
   return (
     <Paper elevation={0} className={classes.players}>
-      <Typography variant="h6">Players</Typography>
+      <Typography variant="h6">Players ({players.length})</Typography>
       {game.state === GameStates.WAITING && <AddPlayers />}
       {players.map((player) => (
         <Player player={player} key={player.id} />
