@@ -52,35 +52,67 @@ export function Wrapping({
 
   return (
     <Slide
+      style={{ transitionDelay: "1s", transitionDuration: "1s" }}
       direction="right"
       in={wrapped}
       appear={true}
       exit={true}
       timeout={{
         enter: 0,
-        exit: 1000,
+        exit: 2000,
       }}
     >
       <div
         className={classes.wrapping}
         style={{ backgroundColor: wrappingColour }}
       >
-        <div
-          className={`${classes.bottomRibbon} ${classes.ribbon}`}
-          style={{ backgroundColor: ribbonColour }}
+        <Slide
+          style={{
+            transitionDelay: "0.5s",
+            transitionTimingFunction: "ease-in",
+            transitionDuration: "0.5s",
+          }}
+          direction="up"
+          in={wrapped}
+          appear={true}
+          exit={true}
+          timeout={{
+            enter: 0,
+            exit: 1000,
+          }}
         >
           <div
-            className={`${classes.ribbonCentreBottom} ${classes.ribbonCentre}`}
-          ></div>
-        </div>
-        <div
-          className={`${classes.topRibbon} ${classes.ribbon}`}
-          style={{ backgroundColor: ribbonColour }}
+            className={`${classes.bottomRibbon} ${classes.ribbon}`}
+            style={{ backgroundColor: ribbonColour }}
+          >
+            <div
+              className={`${classes.ribbonCentreBottom} ${classes.ribbonCentre}`}
+            ></div>
+          </div>
+        </Slide>
+        <Slide
+          style={{
+            transitionTimingFunction: "ease-in",
+            transitionDuration: "0.5s",
+          }}
+          direction="left"
+          in={wrapped}
+          appear={true}
+          exit={true}
+          timeout={{
+            enter: 0,
+            exit: 500,
+          }}
         >
           <div
-            className={`${classes.ribbonCentreTop} ${classes.ribbonCentre}`}
-          ></div>
-        </div>
+            className={`${classes.topRibbon} ${classes.ribbon}`}
+            style={{ backgroundColor: ribbonColour }}
+          >
+            <div
+              className={`${classes.ribbonCentreTop} ${classes.ribbonCentre}`}
+            ></div>
+          </div>
+        </Slide>
       </div>
     </Slide>
   );
