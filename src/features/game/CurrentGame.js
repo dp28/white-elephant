@@ -61,7 +61,21 @@ export function CurrentGame() {
     return () => {
       document.getElementById("root").classList.remove("full-height");
     };
-  });
+  }, []);
+
+  useEffect(() => {
+    const showBrowserConfirmNavigationPopup = (event) => {
+      event.preventDefault();
+      event.returnValue = true;
+    };
+
+    window.addEventListener("beforeunload", showBrowserConfirmNavigationPopup);
+    return () =>
+      window.removeEventListener(
+        "beforeunload",
+        showBrowserConfirmNavigationPopup
+      );
+  }, []);
 
   return (
     <div className={classes.game}>
