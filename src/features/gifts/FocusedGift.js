@@ -98,6 +98,7 @@ export function FocusedGift({ gift, interactive = false }) {
   const game = useSelector(selectGame);
   const image = useSelector(selectImage(gift.imageId));
   const currentTurn = useSelector(selectCurrentTurn);
+  const [unwrapped, setUnwrapped] = useState(false);
   const dispatch = useDispatch();
 
   const reasonNotToSteal = calculateReasonCurrentPlayerCannotStealGift({
@@ -128,6 +129,7 @@ export function FocusedGift({ gift, interactive = false }) {
         forPlayerId: currentTurn.currentPlayerId,
       })
     );
+    setUnwrapped(true);
   };
 
   const unfocus = () => dispatch(stopFocusingOnGift());
@@ -185,24 +187,35 @@ export function FocusedGift({ gift, interactive = false }) {
               <CardContent>
                 {gift.wrapped && "Would you like to open this gift?"}
                 {!gift.wrapped &&
+                  !unwrapped &&
                   reasonNotToSteal &&
                   `You can't steal this gift - ${reasonNotToSteal}`}
-                {!gift.wrapped && !reasonNotToSteal && (
+                {!gift.wrapped && !reasonNotToSteal && !unwrapped && (
                   <span>
                     Steal <span>{gift.name}</span> from{" "}
                     <span>{owner.name}</span>?
                   </span>
                 )}
+                {unwrapped && (
+                  <span>
+                    You unwrapped <span>{gift.name}</span>!
+                  </span>
+                )}
               </CardContent>
               <Divider />
               <CardActions>
-                <Button onClick={unfocus}>Cancel</Button>
+                {!unwrapped && <Button onClick={unfocus}>Cancel</Button>}
+                {unwrapped && (
+                  <Button color="primary" onClick={unfocus}>
+                    Done
+                  </Button>
+                )}
                 {gift.wrapped && (
                   <Button color="primary" onClick={unwrap}>
                     Open
                   </Button>
                 )}
-                {!gift.wrapped && !reasonNotToSteal && (
+                {!gift.wrapped && !reasonNotToSteal && !unwrapped && (
                   <Button color="primary" onClick={steal}>
                     Steal
                   </Button>

@@ -44,7 +44,6 @@ export const giftsSlice = createSlice({
     });
 
     builder.addCase(openGift, (state, action) => {
-      state.focusedGiftId = null;
       const gift = state.giftsById[action.payload.giftId];
       gift.wrapped = false;
       gift.ownerId = action.payload.forPlayerId;
