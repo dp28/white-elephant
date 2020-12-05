@@ -68,15 +68,6 @@ function calculateGiftDimensions({ boardWidth, boardHeight, giftCount }) {
   const giftSideSize =
     Math.floor(smallestSide / giftsOnSmallSide) - GiftMargin * 2;
 
-  console.log({
-    giftSideSize,
-    smallestSide,
-    largestSide,
-    boardWidth,
-    boardHeight,
-    giftCount,
-  });
-
   if (giftSideSize < MinimumGiftSideSize) {
     return { width: MinimumGiftSideSize, height: MinimumGiftSideSize };
   } else {

@@ -75,9 +75,10 @@ const useStyles = makeStyles((theme) => ({
   },
   giftName: {
     fontWeight: "bold",
+    fontSize: "2rem",
   },
   ownerLabel: {
-    fontSize: "1em",
+    fontSize: "1.5rem",
     fontStyle: "italic",
   },
   actionWrapper: {
