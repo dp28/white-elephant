@@ -9,13 +9,13 @@ import {
   CardContent,
   CardMedia,
   Typography,
-  Divider,
   Fade,
   Chip,
 } from "@material-ui/core";
 import { fetchId } from "../../app/identity";
 import { selectPlayer } from "../players/playersSlice";
 import { selectCurrentTurn } from "../turns/turnsSlice";
+import { Wrapping } from "./Wrapping";
 
 const useStyles = makeStyles((theme) => ({
   giftContainer: {
@@ -38,13 +38,6 @@ const useStyles = makeStyles((theme) => ({
     objectFit: "contain",
     width: "100%",
     height: "100%",
-  },
-  wrapping: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    height: "100%",
-    width: "100%",
   },
   imageWrapper: {
     height: "100%",
@@ -83,37 +76,6 @@ const useStyles = makeStyles((theme) => ({
     boxShadow:
       "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);",
   },
-  ribbon: {
-    position: "absolute",
-    boxShadow:
-      "0px 1px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 1px 0px rgba(0,0,0,0.12);",
-  },
-  topRibbon: {
-    width: "10%",
-    height: "100%",
-    top: 0,
-    left: "45%",
-  },
-  bottomRibbon: {
-    width: "100%",
-    height: "10%",
-    left: 0,
-    top: "45%",
-  },
-  ribbonCentre: {
-    filter: "brightness(95%)",
-    backgroundColor: "inherit",
-  },
-  ribbonCentreTop: {
-    width: "100%",
-    height: "50%",
-    marginTop: "2.5%",
-  },
-  ribbonCentreBottom: {
-    height: "100%",
-    width: "50%",
-    marginLeft: "25%",
-  },
 }));
 
 export function Gift({ id, interactive = false, ribbonColour = "gold" }) {
@@ -145,27 +107,7 @@ export function Gift({ id, interactive = false, ribbonColour = "gold" }) {
       }}
     >
       {gift.wrapped ? (
-        <div
-          className={classes.wrapping}
-          style={{ backgroundColor: gift.wrapping.colour }}
-        >
-          <div
-            className={`${classes.bottomRibbon} ${classes.ribbon}`}
-            style={{ backgroundColor: ribbonColour }}
-          >
-            <div
-              className={`${classes.ribbonCentreTop} ${classes.ribbonCentre}`}
-            ></div>
-          </div>
-          <div
-            className={`${classes.topRibbon} ${classes.ribbon}`}
-            style={{ backgroundColor: ribbonColour }}
-          >
-            <div
-              className={`${classes.ribbonCentreBottom} ${classes.ribbonCentre}`}
-            ></div>
-          </div>
-        </div>
+        <Wrapping wrappingColour={gift.wrapping.colour} />
       ) : (
         <>
           {image ? (

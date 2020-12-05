@@ -19,6 +19,7 @@ import { openGift, selectCurrentTurn, stealGift } from "../turns/turnsSlice";
 import { fetchId } from "../../app/identity";
 import { selectPlayer } from "../players/playersSlice";
 import { stopFocusingOnGift } from "./giftsSlice";
+import { Wrapping } from "./Wrapping";
 
 const useStyles = makeStyles((theme) => ({
   focusedGift: {
@@ -57,13 +58,6 @@ const useStyles = makeStyles((theme) => ({
     objectFit: "contain",
     width: "100%",
     height: "100%",
-  },
-  wrapping: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    height: "100%",
-    width: "100%",
   },
   imageWrapper: {
     height: "80%",
@@ -138,21 +132,10 @@ export function FocusedGift({ gift, interactive = false }) {
     <Backdrop className={classes.focusedGift} open>
       <div className={classes.content}>
         <Card className={classes.giftContainer}>
-          <Slide
-            direction="right"
-            in={gift.wrapped}
-            appear={true}
-            exit={true}
-            timeout={{
-              enter: 0,
-              exit: 1000,
-            }}
-          >
-            <div
-              className={classes.wrapping}
-              style={{ backgroundColor: gift.wrapping.colour }}
-            ></div>
-          </Slide>
+          <Wrapping
+            wrappingColour={gift.wrapping.colour}
+            wrapped={gift.wrapped}
+          />
 
           {!gift.wrapped && (
             <>
