@@ -83,9 +83,40 @@ const useStyles = makeStyles((theme) => ({
     boxShadow:
       "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);",
   },
+  ribbon: {
+    position: "absolute",
+    boxShadow:
+      "0px 1px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 1px 0px rgba(0,0,0,0.12);",
+  },
+  topRibbon: {
+    width: "10%",
+    height: "100%",
+    top: 0,
+    left: "45%",
+  },
+  bottomRibbon: {
+    width: "100%",
+    height: "10%",
+    left: 0,
+    top: "45%",
+  },
+  ribbonCentre: {
+    filter: "brightness(95%)",
+    backgroundColor: "inherit",
+  },
+  ribbonCentreTop: {
+    width: "100%",
+    height: "50%",
+    marginTop: "2.5%",
+  },
+  ribbonCentreBottom: {
+    height: "100%",
+    width: "50%",
+    marginLeft: "25%",
+  },
 }));
 
-export function Gift({ id, interactive = false }) {
+export function Gift({ id, interactive = false, ribbonColour = "gold" }) {
   const classes = useStyles();
   const gift = useSelector(selectGift(id));
   const owner = useSelector(selectPlayer(gift.ownerId));
@@ -117,7 +148,24 @@ export function Gift({ id, interactive = false }) {
         <div
           className={classes.wrapping}
           style={{ backgroundColor: gift.wrapping.colour }}
-        ></div>
+        >
+          <div
+            className={`${classes.bottomRibbon} ${classes.ribbon}`}
+            style={{ backgroundColor: ribbonColour }}
+          >
+            <div
+              className={`${classes.ribbonCentreTop} ${classes.ribbonCentre}`}
+            ></div>
+          </div>
+          <div
+            className={`${classes.topRibbon} ${classes.ribbon}`}
+            style={{ backgroundColor: ribbonColour }}
+          >
+            <div
+              className={`${classes.ribbonCentreBottom} ${classes.ribbonCentre}`}
+            ></div>
+          </div>
+        </div>
       ) : (
         <>
           {image ? (
