@@ -120,10 +120,22 @@ function calculateMaxSteals(currentTurn, maxNumberOfStealsPerTurn) {
     return { limited: false };
   }
 
+  if (maxNumberOfStealsPerTurn <= 0) {
+    return {
+      limited: true,
+      count: 0,
+    };
+  }
+
   const openedGiftCount = currentTurn.index;
 
   return {
     limited: true,
-    count: Math.min(openedGiftCount, maxNumberOfStealsPerTurn),
+    count:
+      openedGiftCount === 0
+        ? 0
+        : openedGiftCount === 1
+        ? 1
+        : maxNumberOfStealsPerTurn,
   };
 }
