@@ -9,8 +9,6 @@ import {
   CardMedia,
   Typography,
   Divider,
-  Fade,
-  Slide,
   Backdrop,
   CardActions,
   Button,
@@ -150,49 +148,54 @@ export function FocusedGift({ gift, interactive = false }) {
             </>
           )}
         </Card>
-        {interactive && (
-          <div className={classes.actionWrapper}>
-            <Card>
-              <CardContent>
-                {gift.wrapped && "Would you like to open this gift?"}
-                {!gift.wrapped &&
-                  !unwrapped &&
-                  reasonNotToSteal &&
-                  `You can't steal this gift - ${reasonNotToSteal}`}
-                {!gift.wrapped && !reasonNotToSteal && !unwrapped && (
-                  <span>
-                    Steal <span>{gift.name}</span> from{" "}
-                    <span>{owner.name}</span>?
-                  </span>
-                )}
-                {unwrapped && (
-                  <span>
-                    You unwrapped <span>{gift.name}</span>!
-                  </span>
-                )}
-              </CardContent>
-              <Divider />
-              <CardActions>
-                {!unwrapped && <Button onClick={unfocus}>Cancel</Button>}
-                {unwrapped && (
-                  <Button color="primary" onClick={unfocus}>
-                    Done
-                  </Button>
-                )}
-                {gift.wrapped && (
-                  <Button color="primary" onClick={unwrap}>
-                    Open
-                  </Button>
-                )}
-                {!gift.wrapped && !reasonNotToSteal && !unwrapped && (
-                  <Button color="primary" onClick={steal}>
-                    Steal
-                  </Button>
-                )}
-              </CardActions>
-            </Card>
-          </div>
-        )}
+
+        <div className={classes.actionWrapper}>
+          <Card>
+            <CardContent>
+              {interactive &&
+                gift.wrapped &&
+                "Would you like to open this gift?"}
+              {interactive &&
+                !gift.wrapped &&
+                !unwrapped &&
+                reasonNotToSteal &&
+                `You can't steal this gift - ${reasonNotToSteal}`}
+              {interactive && !gift.wrapped && !reasonNotToSteal && !unwrapped && (
+                <span>
+                  Steal <span>{gift.name}</span> from <span>{owner.name}</span>?
+                </span>
+              )}
+              {unwrapped && (
+                <span>
+                  You unwrapped <span>{gift.name}</span>!
+                </span>
+              )}
+              {!interactive &&
+                `${GameStates.FINISHED ? "Owned by" : "Currently held by"} ${
+                  owner.name
+                }`}
+            </CardContent>
+            <Divider />
+            <CardActions>
+              {!unwrapped && <Button onClick={unfocus}>Cancel</Button>}
+              {unwrapped && (
+                <Button color="primary" onClick={unfocus}>
+                  Done
+                </Button>
+              )}
+              {interactive && gift.wrapped && (
+                <Button color="primary" onClick={unwrap}>
+                  Open
+                </Button>
+              )}
+              {interactive && !gift.wrapped && !reasonNotToSteal && !unwrapped && (
+                <Button color="primary" onClick={steal}>
+                  Steal
+                </Button>
+              )}
+            </CardActions>
+          </Card>
+        </div>
       </div>
     </Backdrop>
   );

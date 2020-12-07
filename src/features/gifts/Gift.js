@@ -83,6 +83,9 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0.5),
     textAlign: "center",
   },
+  clickable: {
+    cursor: "pointer",
+  },
 }));
 
 export function Gift({ id, interactive = false, ribbonColour = "gold" }) {
@@ -106,7 +109,9 @@ export function Gift({ id, interactive = false, ribbonColour = "gold" }) {
 
   return (
     <Card
-      className={classes.giftContainer}
+      className={`${classes.giftContainer} ${
+        gift.wrapped ? "" : classes.clickable
+      }`}
       raised={hovering}
       onMouseOver={() => {
         if (interactive) {
@@ -114,6 +119,11 @@ export function Gift({ id, interactive = false, ribbonColour = "gold" }) {
         }
       }}
       onMouseOut={() => setHovering(false)}
+      onClick={() => {
+        if (!interactive) {
+          dispatch(focusOnGift({ giftId: id }));
+        }
+      }}
     >
       {gift.wrapped ? (
         <Wrapping wrappingColour={gift.wrapping.colour} />
