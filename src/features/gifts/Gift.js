@@ -71,7 +71,6 @@ const useStyles = makeStyles((theme) => ({
     right: -theme.spacing(1),
     zIndex: 1000,
     fontSize: "1.1rem",
-    padding: theme.spacing(1),
     maxWidth: "100%",
     boxShadow:
       "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);",
@@ -89,7 +88,8 @@ export function Gift({ id, interactive = false, ribbonColour = "gold" }) {
   const dispatch = useDispatch();
   const ownedBySelf = owner?.id === fetchId();
   const ownedByCurrentTurnPlayer =
-    game.state === GameStates.STARTED && owner?.id === currentTurn.playerId;
+    game.state === GameStates.STARTED &&
+    owner?.id === currentTurn.currentPlayerId;
 
   const performAction = () => {
     dispatch(focusOnGift({ giftId: id }));

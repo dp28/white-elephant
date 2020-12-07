@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function Turn({ turn }) {
+export function Turn({ turn, index }) {
   const classes = useStyles();
   const player = useSelector(selectPlayer(turn.playerId));
   const isHost = player.id === useSelector(selectGame).hostId;
@@ -40,7 +40,7 @@ export function Turn({ turn }) {
 
   return (
     <Card className={classes.turn}>
-      <Typography className={classes.number}>{turn.number}</Typography>
+      <Typography className={classes.number}>{index + 2}</Typography>
       <Typography className={classes.name}>{player.name}</Typography>{" "}
       {turn.repeat && (
         <Tooltip title="This player gets a second turn because their first turn was so early on they did not have the chance to swap their gift">
