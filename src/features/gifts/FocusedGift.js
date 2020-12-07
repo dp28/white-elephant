@@ -68,7 +68,6 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   giftName: {
-    fontWeight: "bold",
     fontSize: "2rem",
   },
   ownerLabel: {
@@ -79,10 +78,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
-  },
-  ownedBySelf: {
-    backgroundColor: theme.palette.primary.dark,
-    color: theme.palette.getContrastText(theme.palette.primary.dark),
   },
 }));
 
@@ -99,8 +94,6 @@ export function FocusedGift({ gift, interactive = false }) {
     gift,
     currentTurn,
   });
-
-  const ownedBySelf = owner?.id === fetchId();
 
   const steal = () => {
     dispatch(
@@ -149,16 +142,9 @@ export function FocusedGift({ gift, interactive = false }) {
                   <Divider />
                 </div>
               )}
-              <CardContent
-                className={`${classes.textContent} ${
-                  ownedBySelf ? classes.ownedBySelf : ""
-                }`}
-              >
+              <CardContent className={classes.textContent}>
                 <Typography className={classes.giftName}>
                   {gift.name}
-                </Typography>
-                <Typography className={classes.ownerLabel}>
-                  Currently held by {ownedBySelf ? "you" : owner.name}
                 </Typography>
               </CardContent>
             </>

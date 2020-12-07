@@ -40,11 +40,13 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
   },
   imageWrapper: {
+    position: "relative",
     height: "100%",
     width: "100%",
+    display: "flex",
+    flexDirection: "column",
   },
   giftName: {
-    fontWeight: "bold",
     fontSize: "1.2rem",
   },
   ownerLabel: {
@@ -74,6 +76,12 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "100%",
     boxShadow:
       "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);",
+  },
+  giftLabel: {
+    width: "100%",
+    backgroundColor: "#ffffff",
+    padding: theme.spacing(0.5),
+    textAlign: "center",
   },
 }));
 
@@ -105,6 +113,7 @@ export function Gift({ id, interactive = false, ribbonColour = "gold" }) {
           setHovering(true);
         }
       }}
+      onMouseOut={() => setHovering(false)}
     >
       {gift.wrapped ? (
         <Wrapping wrappingColour={gift.wrapping.colour} />
@@ -117,6 +126,7 @@ export function Gift({ id, interactive = false, ribbonColour = "gold" }) {
                 title={gift.name}
                 className={classes.image}
               />
+              <Typography className={classes.giftLabel}>{gift.name}</Typography>
             </div>
           ) : (
             <CardContent className={classes.textContent}>
@@ -138,11 +148,7 @@ export function Gift({ id, interactive = false, ribbonColour = "gold" }) {
       )}
 
       <Fade in={hovering}>
-        <div
-          className={classes.actionPrompt}
-          onClick={performAction}
-          onMouseOut={() => setHovering(false)}
-        ></div>
+        <div className={classes.actionPrompt} onClick={performAction}></div>
       </Fade>
     </Card>
   );
