@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
   },
   imageInput: {
     marginLeft: theme.spacing(1),
+    cursor: "pointer",
   },
   imageContainer: {
     display: "flex",
@@ -100,7 +101,7 @@ export function GiftInput({ onGiftChange, forCurrentUser = true }) {
         helperText="This will be shown to other players once this gift is unwrapped"
       />
 
-      <div className={classes.imageInput}>
+      <label className={classes.imageInput}>
         <div className={classes.imageContainer}>
           <div className={classes.imageOutline}>
             {image ? (
@@ -125,7 +126,7 @@ export function GiftInput({ onGiftChange, forCurrentUser = true }) {
           {image ? "Change image" : "Upload image"}
           <input hidden type="file" accept="image/*" onChange={uploadImage} />
         </Button>
-      </div>
+      </label>
 
       <div className={classes.imageInput}>
         <div className={classes.imageContainer}>
