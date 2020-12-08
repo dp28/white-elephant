@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import { TextField } from "@material-ui/core";
+import { TextField, Divider } from "@material-ui/core";
 import { selectUsername } from "../username/usernameSlice";
 import { fetchId } from "../../app/identity";
 import { isValidPlayerInput } from "./playerValidity";
@@ -12,6 +12,9 @@ const useStyles = makeStyles((theme) => ({
   container: {},
   textField: {
     marginBottom: theme.spacing(4),
+  },
+  divider: {
+    marginBottom: theme.spacing(1),
   },
 }));
 
@@ -40,6 +43,7 @@ export function BuildPlayer({ onPlayerChange, forCurrentUser = true }) {
         required={true}
         margin="normal"
       />
+      <Divider className={classes.divider} />
       <GiftInput onGiftChange={setGift} forCurrentUser={forCurrentUser} />
     </div>
   );

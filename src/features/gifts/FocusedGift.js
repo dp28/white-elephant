@@ -126,6 +126,7 @@ export function FocusedGift({ gift, interactive = false }) {
           <Wrapping
             wrappingColour={gift.wrapping.colour}
             wrapped={gift.wrapped}
+            ribbonColour={gift.wrapping.ribbonColour}
           />
 
           {!gift.wrapped && (

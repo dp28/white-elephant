@@ -6,6 +6,9 @@ import { ChromePicker } from "react-color";
 import { ratio as calculateContrastRatio } from "get-contrast";
 import { isValidGiftInput } from "./giftValidity";
 import { createImage, storeImage } from "../images/imagesSlice";
+import { Wrapping } from "./Wrapping";
+
+const ImageSideLength = "250px";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -27,8 +30,8 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
   },
   imageOutline: {
-    width: "250px",
-    height: "250px",
+    width: ImageSideLength,
+    height: ImageSideLength,
     border: `3px dashed ${theme.palette.grey[300]}`,
     backgroundColor: theme.palette.grey[100],
     display: "flex",
@@ -48,9 +51,25 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     textAlign: "center",
   },
+  wrappingContainer: {
+    position: "relative",
+    width: ImageSideLength,
+    height: ImageSideLength,
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
+  wrappingInput: {
+    marginTop: theme.spacing(1),
+    padding: theme.spacing(1),
+  },
   colourPicker: {
     position: "absolute",
     zIndex: 1000,
+  },
+  colourPickerButton: {
+    display: "block",
+    width: ImageSideLength,
+    marginBottom: theme.spacing(1),
   },
 }));
 
@@ -58,8 +77,12 @@ export function GiftInput({ onGiftChange, forCurrentUser = true }) {
   const classes = useStyles();
   const [name, setName] = useState("");
   const [image, setImage] = useState(null);
-  const [colour, setColour] = useState(generateRandomColour());
-  const [showColourPicker, setShowColourPicker] = useState(false);
+  const [wrappingColour, setWrappingColour] = useState(generateRandomColour());
+  const [ribbonColour, setRibbonColour] = useState(generateRandomColour());
+  const [showWrappingColourPicker, setShowWrappingColourPicker] = useState(
+    false
+  );
+  const [showRibbonColourPicker, setShowRibbonColourPicker] = useState(false);
   const dispatch = useDispatch();
 
   const uploadImage = (event) => {
@@ -74,12 +97,12 @@ export function GiftInput({ onGiftChange, forCurrentUser = true }) {
     const gift = {
       name,
       imageId: image?.id,
-      wrapping: { colour },
+      wrapping: { colour: wrappingColour, ribbonColour },
     };
     if (isValidGiftInput(gift)) {
       onGiftChange(gift);
     }
-  }, [name, onGiftChange, image, colour]);
+  }, [name, onGiftChange, image, wrappingColour, ribbonColour]);
 
   return (
     <div className={classes.container}>
@@ -119,6 +142,7 @@ export function GiftInput({ onGiftChange, forCurrentUser = true }) {
         </div>
 
         <Button
+          className={classes.colourPickerButton}
           component="label"
           color={image ? "default" : "primary"}
           variant="contained"
@@ -128,27 +152,62 @@ export function GiftInput({ onGiftChange, forCurrentUser = true }) {
         </Button>
       </label>
 
-      <div className={classes.imageInput}>
-        <div className={classes.imageContainer}>
-          <div
-            className={`${classes.imageOutline} ${classes.wrapping}`}
-            style={{ backgroundColor: colour }}
-            onClick={() => setShowColourPicker(!showColourPicker)}
-          >
-            <Typography
-              className={classes.imageHelp}
-              style={{ color: calculateContrastingColour(colour) }}
-            >
-              Select a colour to wrap your gift in
-            </Typography>
-          </div>
+      <div className={classes.wrappingInput}>
+        <div className={classes.wrappingContainer}>
+          <Wrapping
+            wrappingColour={wrappingColour}
+            ribbonColour={ribbonColour}
+            animated={false}
+            onWrappingClick={() => {
+              setShowWrappingColourPicker(!showWrappingColourPicker);
+              setShowRibbonColourPicker(false);
+            }}
+            onRibbonClick={() => {
+              setShowRibbonColourPicker(!showRibbonColourPicker);
+              setShowWrappingColourPicker(false);
+            }}
+          />
         </div>
 
-        {showColourPicker && (
+        <Button
+          className={classes.colourPickerButton}
+          variant="contained"
+          style={{
+            backgroundColor: wrappingColour,
+            color: calculateContrastingColour(wrappingColour),
+          }}
+          onClick={() => setShowWrappingColourPicker(!showWrappingColourPicker)}
+        >
+          Change wrapping colour
+        </Button>
+
+        {showWrappingColourPicker && (
           <ChromePicker
             className={classes.colourPicker}
-            color={colour}
-            onChange={({ hex }) => setColour(hex)}
+            color={wrappingColour}
+            onChange={({ hex }) => setWrappingColour(hex)}
+            onChangeComplete={() => setShowWrappingColourPicker(false)}
+          />
+        )}
+
+        <Button
+          className={classes.colourPickerButton}
+          variant="contained"
+          style={{
+            backgroundColor: ribbonColour,
+            color: calculateContrastingColour(ribbonColour),
+          }}
+          onClick={() => setShowRibbonColourPicker(!showRibbonColourPicker)}
+        >
+          Change ribbon colour
+        </Button>
+
+        {showRibbonColourPicker && (
+          <ChromePicker
+            className={classes.colourPicker}
+            color={ribbonColour}
+            onChange={({ hex }) => setRibbonColour(hex)}
+            onChangeComplete={() => setShowRibbonColourPicker(false)}
           />
         )}
       </div>

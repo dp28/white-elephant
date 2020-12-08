@@ -126,7 +126,10 @@ export function Gift({ id, interactive = false, ribbonColour = "gold" }) {
       }}
     >
       {gift.wrapped ? (
-        <Wrapping wrappingColour={gift.wrapping.colour} />
+        <Wrapping
+          wrappingColour={gift.wrapping.colour}
+          ribbonColour={gift.wrapping.ribbonColour}
+        />
       ) : (
         <>
           {image ? (
