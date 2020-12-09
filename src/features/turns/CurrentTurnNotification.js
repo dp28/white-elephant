@@ -4,16 +4,14 @@ import {
   Typography,
   CardHeader,
   CardContent,
-  CardActions,
-  Button,
   Accordion,
   AccordionSummary,
   AccordionDetails,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { useSelector, useDispatch } from "react-redux";
-import { selectGame, finishGame, GameStates } from "../game/gameSlice";
+import { useSelector } from "react-redux";
+import { selectGame, GameStates } from "../game/gameSlice";
 import { fetchId } from "../../app/identity";
 import { selectPlayer } from "../players/playersSlice";
 import { selectCurrentTurn } from "./turnsSlice";
@@ -35,26 +33,12 @@ export function CurrentTurnNotification() {
   const game = useSelector(selectGame);
   const gameFinished = game.state === GameStates.FINISHED;
   const isHost = fetchId() === game.hostId;
-  const dispatch = useDispatch();
 
   const isSelf = player.id === fetchId();
   const isOffline = !player.connectionId;
-  const canFinishGame = currentTurn.wrappedGiftCount <= 0 && !gameFinished;
 
   const instructions = buildInstructions(currentTurn);
   const showStolenMessage = currentTurn.stolenGifts.length > 0;
-
-  const finishGameButton = (
-    <CardActions>
-      <Button
-        color="primary"
-        onClick={() => dispatch(finishGame())}
-        className={classes.finishGameButton}
-      >
-        Finish game
-      </Button>
-    </CardActions>
-  );
 
   if (gameFinished) {
     return (
@@ -80,7 +64,6 @@ export function CurrentTurnNotification() {
             It's your turn
             {showStolenMessage ? " because your gift was stolen!" : "!"}
           </Typography>
-          {canFinishGame && finishGameButton}
         </AccordionSummary>
         <AccordionDetails>
           <Typography>{instructions.currentPlayer}</Typography>
@@ -98,7 +81,6 @@ export function CurrentTurnNotification() {
             It's {player.name}'s turn
             {showStolenMessage ? " because their gift was stolen" : ""}
           </Typography>
-          {canFinishGame && finishGameButton}
         </AccordionSummary>
         <AccordionDetails>
           {isOffline ? (
