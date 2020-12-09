@@ -21,6 +21,7 @@ import { NewGameButton } from "./NewGameButton";
 import { CurrentTurnNotification } from "../turns/CurrentTurnNotification";
 import { Rules } from "./Rules";
 import { FinishGameButton } from "../turns/FinishGameButton";
+import { HowToAddPlayers } from "../players/HowToAddPlayers";
 
 const useStyles = makeStyles((theme) => ({
   spinner: {
@@ -94,6 +95,7 @@ export function CurrentGame() {
       <Grid container spacing={3} className={classes.content}>
         <Grid item xs={12} sm={8} md={9} className={classes.boardContainer}>
           {game.state !== GameStates.FINISHED && <Rules />}
+          {game.state === GameStates.WAITING && <HowToAddPlayers />}
           {game.state !== GameStates.WAITING && <CurrentTurnNotification />}
           <FinishGameButton />
           <Board />
