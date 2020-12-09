@@ -19,17 +19,16 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(3),
   },
   title: {
-    fontSize: "1.3rem",
-  },
-  smallTitle: {
     fontSize: "1.1rem",
     marginBottom: theme.spacing(1),
     marginTop: theme.spacing(2),
+    color: theme.palette.primary.dark,
   },
   text: {
     marginBottom: theme.spacing(1),
   },
   emphasis: {
+    color: theme.palette.primary.dark,
     fontWeight: "bold",
   },
 }));
@@ -40,7 +39,7 @@ export function Rules() {
   return (
     <Accordion>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography className={classes.title}>How to play</Typography>
+        <Typography>How to play</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <div>
@@ -73,9 +72,7 @@ export function Rules() {
             from must open a new gift.
           </Typography>
 
-          <Typography className={classes.smallTitle}>
-            Taking your turn
-          </Typography>
+          <Typography className={classes.title}>Taking your turn</Typography>
           <Typography gutterBottom>
             On your turn, you can either click on a gift to open/steal it, or
             you can tell the host which gift you want. The host can take turns
@@ -104,9 +101,7 @@ export function Rules() {
             </li>
           </ul>
 
-          <Typography className={classes.smallTitle}>
-            Ending the game
-          </Typography>
+          <Typography className={classes.title}>Ending the game</Typography>
           <Typography gutterBottom>
             The player who opened the first gift gets one extra turn at the end
             of the game (as they might not ever have had the option to exchange

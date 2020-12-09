@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Grid, Button, Typography } from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { selectGifts, selectFocusedGift } from "../gifts/giftsSlice";
 import { Gift } from "../gifts/Gift";
@@ -10,7 +10,6 @@ import { shuffle } from "../../utils/arrays";
 import { selectUpcomingTurns, selectCurrentTurn } from "../turns/turnsSlice";
 import { FocusedGift } from "../gifts/FocusedGift";
 import { useGiftGrid } from "./useGiftGrid";
-import { Rules } from "./Rules";
 
 const useStyles = makeStyles((theme) => ({
   board: {
@@ -81,7 +80,6 @@ export function Board() {
             </Typography>
           )}
         </div>
-        <Rules />
       </div>
     );
   }

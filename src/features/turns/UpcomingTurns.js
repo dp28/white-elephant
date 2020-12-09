@@ -11,10 +11,8 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.grey[100],
     padding: theme.spacing(1),
   },
-  subtitle: {
-    color: theme.palette.grey[800],
-    marginBottom: theme.spacing(1),
-    fontStyle: "italic",
+  title: {
+    color: theme.palette.primary.dark,
   },
   divider: {
     marginTop: theme.spacing(2),
@@ -28,13 +26,13 @@ export function UpcomingTurns() {
 
   return (
     <Paper elevation={0} className={classes.turns}>
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" gutterBottom className={classes.title}>
         Current Turn
       </Typography>
       <CurrentTurn />
       <Divider className={classes.divider} />
 
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" gutterBottom className={classes.title}>
         Upcoming Turns ({turns.length})
       </Typography>
       {turns.map((turn, index) => (

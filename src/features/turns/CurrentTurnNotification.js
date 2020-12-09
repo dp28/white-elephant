@@ -24,9 +24,6 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: theme.spacing(1),
   },
   title: {
-    fontSize: "1.5rem",
-    lineHeight: "3rem",
-    fontWeight: 500,
     flexGrow: 1,
   },
 }));
@@ -74,7 +71,7 @@ export function CurrentTurnNotification() {
     );
   } else if (isSelf) {
     return (
-      <Accordion defaultExpanded className={classes.notification}>
+      <Accordion>
         <AccordionSummary
           className={classes.header}
           expandIcon={<ExpandMoreIcon />}
@@ -92,7 +89,7 @@ export function CurrentTurnNotification() {
     );
   } else if (isHost) {
     return (
-      <Accordion defaultExpanded className={classes.notification}>
+      <Accordion>
         <AccordionSummary
           className={classes.header}
           expandIcon={<ExpandMoreIcon />}
@@ -122,7 +119,7 @@ export function CurrentTurnNotification() {
     );
   } else {
     return (
-      <Accordion defaultExpanded className={classes.notification}>
+      <Accordion>
         <AccordionSummary
           className={classes.header}
           expandIcon={<ExpandMoreIcon />}
