@@ -26,7 +26,8 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "center",
     height: "100%",
-    padding: theme.spacing(3),
+    paddingTop: theme.spacing(3),
+    paddingBottom: theme.spacing(3),
   },
   form: {
     display: "flex",
@@ -63,6 +64,9 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "inherit",
     color: "inherit",
   },
+  infoAlert: {
+    paddingLeft: theme.spacing(1),
+  },
 }));
 
 export function NewGame() {
@@ -96,7 +100,7 @@ export function NewGame() {
       <Card className={classes.card}>
         <CardHeader title="Create a new game" />
         <CardContent>
-          <Alert severity="info">
+          <Alert severity="info" className={classes.infoAlert} icon={false}>
             <Accordion defaultExpanded className={classes.expandable}>
               <AlertTitle>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
