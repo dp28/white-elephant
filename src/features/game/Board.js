@@ -10,6 +10,7 @@ import { shuffle } from "../../utils/arrays";
 import { selectUpcomingTurns, selectCurrentTurn } from "../turns/turnsSlice";
 import { FocusedGift } from "../gifts/FocusedGift";
 import { useGiftGrid } from "./useGiftGrid";
+import { Rules } from "./Rules";
 
 const useStyles = makeStyles((theme) => ({
   board: {
@@ -23,13 +24,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexWrap: "wrap",
   },
-  cover: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: `${theme.palette.grey[900]}33`,
+  waiting: {
     textAlign: "center",
     verticalAlign: "center",
   },
@@ -58,7 +53,7 @@ export function Board() {
   if (game.state === GameStates.WAITING) {
     return (
       <div className={classes.board}>
-        <div className={classes.cover}>
+        <div className={classes.waiting}>
           {game.hostId === fetchId() ? (
             <>
               <Typography className={classes.text}>
@@ -86,6 +81,7 @@ export function Board() {
             </Typography>
           )}
         </div>
+        <Rules />
       </div>
     );
   }
