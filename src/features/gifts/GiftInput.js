@@ -26,7 +26,6 @@ const useStyles = makeStyles((theme) => ({
   imageContainer: {
     display: "flex",
     flexBasis: "100%",
-    marginTop: theme.spacing(3),
     marginBottom: theme.spacing(1),
   },
   imageOutline: {
@@ -46,6 +45,18 @@ const useStyles = makeStyles((theme) => ({
   imageHelp: {
     color: theme.palette.grey[600],
   },
+  imageLabel: {
+    marginLeft: theme.spacing(2),
+  },
+  imageForm: {
+    marginTop: theme.spacing(1),
+    display: "flex",
+    alignItems: "center",
+    width: "100%",
+    [theme.breakpoints.down("xs")]: {
+      flexDirection: "column",
+    },
+  },
   wrapping: {
     cursor: "pointer",
     padding: theme.spacing(1),
@@ -54,22 +65,32 @@ const useStyles = makeStyles((theme) => ({
   wrappingContainer: {
     position: "relative",
     width: ImageSideLength,
+    minWidth: ImageSideLength,
+    maxWidth: ImageSideLength,
     height: ImageSideLength,
+    minHeight: ImageSideLength,
+    maxHeight: ImageSideLength,
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
   },
   wrappingInput: {
     marginTop: theme.spacing(1),
     padding: theme.spacing(1),
+    display: "flex",
+    alignItems: "center",
+    [theme.breakpoints.down("xs")]: {
+      flexDirection: "column",
+    },
   },
   colourPicker: {
     position: "absolute",
     zIndex: 1000,
   },
-  colourPickerButton: {
-    display: "block",
-    width: ImageSideLength,
-    marginBottom: theme.spacing(1),
+  button: {
+    marginTop: theme.spacing(1),
+  },
+  emphasis: {
+    fontWeight: "bold",
   },
 }));
 
@@ -88,6 +109,9 @@ export function GiftInput({ onGiftChange, forCurrentUser = true }) {
   const uploadImage = (event) => {
     event.preventDefault();
     const files = event.target.files;
+    if (!event.target.files.length) {
+      return;
+    }
     const image = createImage({ files });
     setImage(image);
     dispatch(storeImage(image));
@@ -106,7 +130,7 @@ export function GiftInput({ onGiftChange, forCurrentUser = true }) {
 
   return (
     <div className={classes.container}>
-      <Typography variant="h6" className={classes.item}>
+      <Typography variant="h6" className={classes.item} gutterBottom>
         {forCurrentUser ? "Your gift" : "The player's gift"}
       </Typography>
       <Typography className={classes.item}>
@@ -124,33 +148,40 @@ export function GiftInput({ onGiftChange, forCurrentUser = true }) {
         helperText="This will be shown to other players once this gift is unwrapped"
       />
 
-      <label className={classes.imageInput}>
-        <div className={classes.imageContainer}>
-          <div className={classes.imageOutline}>
-            {image ? (
-              <img
-                src={image.url}
-                alt={image.fileName}
-                className={classes.image}
-              />
-            ) : (
-              <Typography className={classes.imageHelp}>
-                Upload an image of your gift
-              </Typography>
-            )}
+      <div className={classes.imageForm}>
+        <label className={classes.imageInput}>
+          <div className={classes.imageContainer}>
+            <div className={classes.imageOutline}>
+              {image ? (
+                <img
+                  src={image.url}
+                  alt={image.fileName}
+                  className={classes.image}
+                />
+              ) : (
+                <Typography className={classes.imageHelp}>
+                  Upload an image of your gift
+                </Typography>
+              )}
+            </div>
           </div>
-        </div>
-
-        <Button
-          className={classes.colourPickerButton}
-          component="label"
-          color={image ? "default" : "primary"}
-          variant="contained"
-        >
-          {image ? "Change image" : "Upload image"}
           <input hidden type="file" accept="image/*" onChange={uploadImage} />
-        </Button>
-      </label>
+        </label>
+
+        <div className={classes.imageLabel}>
+          <Typography>Upload an image that represents your gift</Typography>
+
+          <Button
+            className={classes.button}
+            component="label"
+            color={image ? "default" : "primary"}
+            variant="contained"
+          >
+            {image ? "Change image" : "Upload image"}
+            <input hidden type="file" accept="image/*" onChange={uploadImage} />
+          </Button>
+        </div>
+      </div>
 
       <div className={classes.wrappingInput}>
         <div className={classes.wrappingContainer}>
@@ -169,47 +200,61 @@ export function GiftInput({ onGiftChange, forCurrentUser = true }) {
           />
         </div>
 
-        <Button
-          className={classes.colourPickerButton}
-          variant="contained"
-          style={{
-            backgroundColor: wrappingColour,
-            color: calculateContrastingColour(wrappingColour),
-          }}
-          onClick={() => setShowWrappingColourPicker(!showWrappingColourPicker)}
-        >
-          Change wrapping colour
-        </Button>
+        <div className={classes.imageLabel}>
+          {showWrappingColourPicker && (
+            <ChromePicker
+              className={classes.colourPicker}
+              color={wrappingColour}
+              onChange={({ hex }) => setWrappingColour(hex)}
+              onChangeComplete={() => setShowWrappingColourPicker(false)}
+            />
+          )}
 
-        {showWrappingColourPicker && (
-          <ChromePicker
-            className={classes.colourPicker}
-            color={wrappingColour}
-            onChange={({ hex }) => setWrappingColour(hex)}
-            onChangeComplete={() => setShowWrappingColourPicker(false)}
-          />
-        )}
+          {showRibbonColourPicker && (
+            <ChromePicker
+              className={classes.colourPicker}
+              color={ribbonColour}
+              onChange={({ hex }) => setRibbonColour(hex)}
+              onChangeComplete={() => setShowRibbonColourPicker(false)}
+            />
+          )}
+          <Typography className={classes.emphasis}>
+            Remember this wrapping!
+          </Typography>
+          <Typography>
+            It's the only way you'll have during the game to identify the gift
+            you brought. You don't want to open your own gift, do you?
+          </Typography>
+          <div>
+            <Button
+              className={classes.button}
+              variant="contained"
+              style={{
+                backgroundColor: wrappingColour,
+                color: calculateContrastingColour(wrappingColour),
+              }}
+              onClick={() =>
+                setShowWrappingColourPicker(!showWrappingColourPicker)
+              }
+            >
+              Change wrapping colour
+            </Button>
+          </div>
 
-        <Button
-          className={classes.colourPickerButton}
-          variant="contained"
-          style={{
-            backgroundColor: ribbonColour,
-            color: calculateContrastingColour(ribbonColour),
-          }}
-          onClick={() => setShowRibbonColourPicker(!showRibbonColourPicker)}
-        >
-          Change ribbon colour
-        </Button>
-
-        {showRibbonColourPicker && (
-          <ChromePicker
-            className={classes.colourPicker}
-            color={ribbonColour}
-            onChange={({ hex }) => setRibbonColour(hex)}
-            onChangeComplete={() => setShowRibbonColourPicker(false)}
-          />
-        )}
+          <div>
+            <Button
+              className={classes.button}
+              variant="contained"
+              style={{
+                backgroundColor: ribbonColour,
+                color: calculateContrastingColour(ribbonColour),
+              }}
+              onClick={() => setShowRibbonColourPicker(!showRibbonColourPicker)}
+            >
+              Change ribbon colour
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );
