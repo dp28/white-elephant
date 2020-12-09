@@ -15,10 +15,11 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Box,
 } from "@material-ui/core";
 import { BuildPlayer } from "../players/BuildPlayer";
 import { updateUsername } from "../username/usernameSlice";
-import AlertTitle from "@material-ui/lab/AlertTitle";
+import { Rules } from "./Rules";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -44,13 +45,11 @@ const useStyles = makeStyles((theme) => ({
   card: {
     maxWidth: "800px",
   },
-  title: {
-    fontSize: "1.3rem",
-  },
   smallTitle: {
     fontSize: "1.1rem",
     marginBottom: theme.spacing(1),
     marginTop: theme.spacing(2),
+    color: theme.palette.primary.dark,
   },
   text: {
     marginBottom: theme.spacing(1),
@@ -58,14 +57,10 @@ const useStyles = makeStyles((theme) => ({
   },
   emphasis: {
     fontWeight: "bold",
+    color: theme.palette.primary.dark,
   },
-  expandable: {
-    boxShadow: "none",
-    backgroundColor: "inherit",
-    color: "inherit",
-  },
-  infoAlert: {
-    paddingLeft: theme.spacing(1),
+  info: {
+    border: `2px solid ${theme.palette.info.light}`,
   },
 }));
 
@@ -100,15 +95,13 @@ export function NewGame() {
       <Card className={classes.card}>
         <CardHeader title="Create a new game" />
         <CardContent>
-          <Alert severity="info" className={classes.infoAlert} icon={false}>
-            <Accordion defaultExpanded className={classes.expandable}>
-              <AlertTitle>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography className={classes.title}>
-                    How to host a game
-                  </Typography>
-                </AccordionSummary>
-              </AlertTitle>
+          <Box className={classes.info}>
+            <Accordion defaultExpanded>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography className={classes.title}>
+                  How to host a game
+                </Typography>
+              </AccordionSummary>
               <AccordionDetails>
                 <div>
                   <Typography className={classes.text}>
@@ -159,7 +152,8 @@ export function NewGame() {
                 </div>
               </AccordionDetails>
             </Accordion>
-          </Alert>
+            <Rules />
+          </Box>
           <TextField
             label="Game name"
             value={name}
