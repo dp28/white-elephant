@@ -15,6 +15,7 @@ import { selectGame, GameStates } from "../game/gameSlice";
 import { fetchId } from "../../app/identity";
 import { selectPlayer } from "../players/playersSlice";
 import { selectCurrentTurn } from "./turnsSlice";
+import { DownloadAllButton } from "../gifts/DownloadAllButton";
 
 const useStyles = makeStyles((theme) => ({
   notification: {
@@ -45,11 +46,27 @@ export function CurrentTurnNotification() {
       <Card className={classes.notification}>
         <CardHeader title="Thanks for playing!" />
         <CardContent>
-          <Typography>
+          <Typography gutterBottom>
             All gifts have now been unwrapped and exchanged - hopefully you got
             something you wanted. Or at least got something absolutely
             ridiculous.
           </Typography>
+          {isHost && (
+            <>
+              <Typography variant="h6" gutterBottom>
+                Results
+              </Typography>
+              <Typography gutterBottom>
+                As the host, you can download the results of the game, including
+                both who received each gift and who brought each gift. This can
+                be useful if players need to send each other gifts after the
+                game (eg to send gifts by post or email). Having the full list
+                to refer back to will help in case someone forgets who they need
+                to send something to!
+              </Typography>
+              <DownloadAllButton />
+            </>
+          )}
         </CardContent>
       </Card>
     );

@@ -57,7 +57,7 @@ export const toRTCImage = async (reduxImage) => {
   };
 };
 
-async function toBlobOrNull(url) {
+export async function toBlobOrNull(url) {
   try {
     return await fetch(url).then((r) => r.blob());
   } catch (error) {
@@ -94,6 +94,7 @@ export const createImage = ({ files, caption }) => {
 };
 
 export const selectImages = (state) => Object.values(state.images.imagesById);
+export const selectImagesById = (state) => state.images.imagesById;
 export const selectImage = (id) => (state) => state.images.imagesById[id];
 
 export const asyncConvertImagesRTCFormat = (images) =>
