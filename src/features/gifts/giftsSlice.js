@@ -24,11 +24,17 @@ export const giftsSlice = createSlice({
     });
 
     builder.addCase(addPlayer, (state, action) => {
-      const { id, name, description, imageId, wrapping } = action.payload.gift;
+      const {
+        id,
+        name,
+        messageToReceiver,
+        imageId,
+        wrapping,
+      } = action.payload.gift;
       state.giftsById[id] = {
         id,
         name,
-        description,
+        messageToReceiver,
         wrapping,
         imageId,
         wrapped: true,

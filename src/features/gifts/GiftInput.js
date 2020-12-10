@@ -98,6 +98,7 @@ export function GiftInput({ onGiftChange, forCurrentUser = true }) {
   const classes = useStyles();
   const [name, setName] = useState("");
   const [image, setImage] = useState(null);
+  const [messageToReceiver, setMessageToReceiver] = useState("");
   const [wrappingColour, setWrappingColour] = useState(generateRandomColour());
   const [ribbonColour, setRibbonColour] = useState(generateRandomColour());
   const [showWrappingColourPicker, setShowWrappingColourPicker] = useState(
@@ -121,12 +122,20 @@ export function GiftInput({ onGiftChange, forCurrentUser = true }) {
     const gift = {
       name,
       imageId: image?.id,
+      messageToReceiver: messageToReceiver || null,
       wrapping: { colour: wrappingColour, ribbonColour },
     };
     if (isValidGiftInput(gift)) {
       onGiftChange(gift);
     }
-  }, [name, onGiftChange, image, wrappingColour, ribbonColour]);
+  }, [
+    name,
+    onGiftChange,
+    image,
+    wrappingColour,
+    ribbonColour,
+    messageToReceiver,
+  ]);
 
   return (
     <div className={classes.container}>
@@ -255,6 +264,20 @@ export function GiftInput({ onGiftChange, forCurrentUser = true }) {
             </Button>
           </div>
         </div>
+      </div>
+
+      <div>
+        <TextField
+          multiline
+          label="Secret message"
+          placeholder="The gift card redemption code is XYZ123. Hope you enjoy it!"
+          className={classes.item}
+          value={messageToReceiver}
+          onChange={(event) => setMessageToReceiver(event.target.value)}
+          required={false}
+          margin="normal"
+          helperText="A message to be shown only to the person who has this gift when the game finishes. A useful place to put more gift details, like gift card redemption codes, or your contact details if you need to post them the gift."
+        />
       </div>
     </div>
   );
