@@ -137,6 +137,55 @@ export function NewGame() {
               </AccordionDetails>
             </Accordion>
             <Rules />
+
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography className={classes.title}>Gift ideas</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <div>
+                  <Typography className={classes.text}>
+                    If you want, when you invite other players you can suggest a
+                    theme and/or price limit for gifts. Here are some ideas:
+                  </Typography>
+                  <ul>
+                    <li>
+                      <Typography>
+                        <span className={classes.emphasis}>Gift cards</span>{" "}
+                        that can be redeemed online
+                      </Typography>
+                    </li>
+                    <li>
+                      <Typography>
+                        <span className={classes.emphasis}>Donations</span> to
+                        various charities
+                      </Typography>
+                    </li>
+                    <li>
+                      <Typography>
+                        <span className={classes.emphasis}>Physical gifts</span>{" "}
+                        - for this you'll need to make sure players are able to
+                        exchange gifts in person or by post
+                      </Typography>
+                    </li>
+                    <li>
+                      <Typography>
+                        <span className={classes.emphasis}>
+                          Profile pictures
+                        </span>{" "}
+                        - suggest that all players agree to use the picture
+                        included with their gift as their profile picture on
+                        Facebook / WhatsApp / Slack / your choice of app for a
+                        few weeks after this game
+                      </Typography>
+                    </li>
+                    <li>
+                      <Typography>Or anything else you come up with</Typography>
+                    </li>
+                  </ul>
+                </div>
+              </AccordionDetails>
+            </Accordion>
           </Box>
           <TextField
             label="Game name"
