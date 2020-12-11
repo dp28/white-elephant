@@ -57,7 +57,7 @@ export async function buildConnections(store) {
         delete connectionPromises[connectionId];
         store.dispatch(disconnect({ id: connectionId }));
         dispatchPlayerDisconnected(connectionId);
-        reject(new Error(`Player ${connectionId} diconnected`));
+        reject(new Error(`Player ${connectionId} disconnected`));
       });
     });
 
