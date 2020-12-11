@@ -42,6 +42,9 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "600px",
     padding: theme.spacing(1),
   },
+  emphasis: {
+    fontWeight: "bold",
+  },
 }));
 
 export function JoinGame() {
@@ -68,8 +71,26 @@ export function JoinGame() {
         <Alert severity="error">
           <AlertTitle>Unable to join game</AlertTitle>
           <Typography gutterBottom>
-            Unfortunately this game can't be loaded right now. Either ask the
-            game host for a new link, or try creating a game yourself!
+            Unfortunately this game can't be loaded right now. Please confirm
+            with the player hosting your game that the game is available. The
+            host needs to have the game open on their browser when other players
+            try to join.
+          </Typography>
+          <Typography gutterBottom>
+            If the host confirms the game is available, there may be a browser
+            or networking error. Try refreshing the page, or opening the link in
+            another browser.
+          </Typography>
+          <Typography gutterBottom>
+            If none of these steps work, you can ask the host to add you as an{" "}
+            <span className={classes.emphasis}>offline player</span>. You can
+            still take part in the game over video chat, but you'll need to tell
+            the host what you want to do on your turn and they will take your
+            turn for you. You'll also need to send the host your gift
+            information.
+          </Typography>
+          <Typography gutterBottom>
+            Alternatively, if you want you can create your own game!
           </Typography>
           <Button
             variant="outlined"
