@@ -20,6 +20,7 @@ import { fetchId } from "../../app/identity";
 import { selectPlayer } from "../players/playersSlice";
 import { stopFocusingOnGift } from "./giftsSlice";
 import { Wrapping } from "./Wrapping";
+import { DownloadButton } from "./DownloadButton";
 
 const useStyles = makeStyles((theme) => ({
   focusedGift: {
@@ -262,6 +263,20 @@ export function FocusedGift({ gift, interactive = false }) {
                   <Button onClick={() => setRevealToHost(!revealToHost)}>
                     {revealToHost ? "Hide message" : "Reveal message"}
                   </Button>
+                )}
+                {(ownedBySelf || isHost) && image && (
+                  <DownloadButton
+                    getFile={async () => {
+                      const extension = image.fileName.split(".").pop();
+                      const name = `${gift.name}.${extension}`;
+                      return {
+                        name,
+                        url: image.url,
+                      };
+                    }}
+                  >
+                    Download image
+                  </DownloadButton>
                 )}
               </CardActions>
             </Card>

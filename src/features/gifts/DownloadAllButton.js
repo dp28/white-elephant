@@ -11,6 +11,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { downloadZip } from "client-zip";
+import { DownloadButton } from "./DownloadButton";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -127,16 +128,8 @@ export const DownloadAllButton = () => {
     }
   };
 
-  const downloadAll = async (event) => {
-    event.preventDefault();
-
-    const file = includeImages ? await buildZipFile() : getResultsCSVFile();
-
-    const link = document.createElement("a");
-    link.href = file.url;
-    link.download = file.name;
-    link.click();
-    link.remove();
+  const buildDownloadFile = async () => {
+    return includeImages ? await buildZipFile() : getResultsCSVFile();
   };
 
   return (
@@ -178,14 +171,13 @@ export const DownloadAllButton = () => {
         />
       </div>
       <div>
-        <Button
+        <DownloadButton
           className={classes.button}
-          color="primary"
-          variant="contained"
-          onClick={downloadAll}
+          buttonVariant="contained"
+          getFile={buildDownloadFile}
         >
           Download all gifts
-        </Button>
+        </DownloadButton>
       </div>
     </form>
   );
