@@ -80,6 +80,15 @@ export function CurrentGame() {
       );
   }, []);
 
+  useEffect(() => {
+    const previousTitle = document.title;
+    const suffix = host.id === fetchId() ? " | host" : "";
+    document.title = `${game.name}${suffix} | White Elephant`;
+    return () => {
+      document.title = previousTitle;
+    };
+  }, [game, host]);
+
   return (
     <div className={classes.game}>
       <AppBar>
