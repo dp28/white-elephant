@@ -5,12 +5,9 @@ import {
   Chip,
   Tooltip,
   CardContent,
-  Divider,
-  CardHeader,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useSelector } from "react-redux";
-import { selectGame } from "../game/gameSlice";
 import { fetchId } from "../../app/identity";
 import { selectPlayer } from "../players/playersSlice";
 import { selectCurrentTurn } from "./turnsSlice";
