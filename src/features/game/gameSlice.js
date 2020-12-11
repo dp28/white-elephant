@@ -56,10 +56,17 @@ export const gameSlice = createSlice({
       state.gameToJoin.game = null;
       state.gameToJoin.loading = false;
       state.gameToJoin.joining = false;
+      state.gameToJoin.error = null;
     },
     startNewGame: (state) => {
       state.game = InitialState.game;
       state.gameToJoin = InitialState.gameToJoin;
+    },
+    failedToConnectToHost: (state, action) => {
+      state.gameToJoin.game = null;
+      state.gameToJoin.loading = false;
+      state.gameToJoin.joining = false;
+      state.gameToJoin.error = `Failed to connect to host ${action.payload.hostId}`;
     },
     ...gameReducers({
       startExchangingGifts: (state, action) => {
@@ -82,6 +89,7 @@ export const {
   startExchangingGifts,
   finishGame,
   startNewGame,
+  failedToConnectToHost,
 } = gameSlice.actions;
 
 export const startGame = ({ host, name }) => (dispatch) => {

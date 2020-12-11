@@ -7,6 +7,8 @@ import {
   disconnectedFromServer,
   connectedToServer,
 } from "../features/connections/connectionsSlice";
+import { loadGameDataFromURL } from "../features/game/loadOrJoinGame";
+import { failedToConnectToHost } from "../features/game/gameSlice";
 
 const Peer = createPeer();
 
@@ -45,25 +47,36 @@ function createPeer({ attemptToRecover = true } = {}) {
 const SECONDS_TO_WAIT_BEFORE_RECONNECTING = 60;
 
 async function attemptToRecoverFromConnectionError(error) {
-  if (!idAlreadyTaken(error)) {
+  if (idAlreadyTaken(error)) {
+    // Client has changed network, so server hasn't registered a disconnect,
+    // but the client needs to reconnect
+    console.debug("Retrying connecting to server after error", error);
+    store.dispatch(
+      startConnectingToServer({
+        secondsToConnect: SECONDS_TO_WAIT_BEFORE_RECONNECTING + 5,
+      })
+    );
+
+    await wait(SECONDS_TO_WAIT_BEFORE_RECONNECTING);
+    return createPeer({ attemptToRecover: false });
+  } else if (couldNotConnectToPeer(error)) {
+    const peerId = couldNotConnectToPeer(error);
+    if (peerId === loadGameDataFromURL().hostId) {
+      store.dispatch(failedToConnectToHost({ hostId: peerId }));
+    } else {
+      throw error;
+    }
+  } else {
     throw error;
   }
-
-  // Client has changed network, so server hasn't registered a disconnect,
-  // but the client needs to reconnect
-  console.debug("Retrying connecting to server after error", error);
-  store.dispatch(
-    startConnectingToServer({
-      secondsToConnect: SECONDS_TO_WAIT_BEFORE_RECONNECTING + 5,
-    })
-  );
-
-  await wait(SECONDS_TO_WAIT_BEFORE_RECONNECTING);
-  return createPeer({ attemptToRecover: false });
 }
 
 function idAlreadyTaken(error) {
   return error.message.match(/ID.*is taken/);
+}
+
+function couldNotConnectToPeer(error) {
+  return error.message.match(/Could not connect to peer (\w+)/)[1];
 }
 
 function wait(seconds) {

@@ -15,6 +15,8 @@ import { selectGameToJoin, stopJoiningGame, joinGame } from "./gameSlice";
 import { BuildPlayer } from "../players/BuildPlayer";
 import { selectImage } from "../images/imagesSlice";
 import { updateUsername } from "../username/usernameSlice";
+import Alert from "@material-ui/lab/Alert";
+import AlertTitle from "@material-ui/lab/AlertTitle";
 
 const useStyles = makeStyles((theme) => ({
   loadingContent: {
@@ -24,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
   backdrop: {
     zIndex: 10000,
+    padding: theme.spacing(1),
   },
   spinner: {
     marginTop: theme.spacing(2),
@@ -43,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 
 export function JoinGame() {
   const classes = useStyles();
-  const { game, loading, joining } = useSelector(selectGameToJoin);
+  const { game, loading, joining, error } = useSelector(selectGameToJoin);
   const [player, setPlayer] = useState(null);
   const image = useSelector(selectImage(player?.gift?.imageId));
   const dispatch = useDispatch();
@@ -57,6 +60,24 @@ export function JoinGame() {
             <CircularProgress color="inherit" className={classes.spinner} />
           </CardContent>
         </Card>
+      </Backdrop>
+    );
+  } else if (error) {
+    return (
+      <Backdrop open={true} className={classes.backdrop}>
+        <Alert severity="error">
+          <AlertTitle>Unable to join game</AlertTitle>
+          <Typography gutterBottom>
+            Unfortunately this game can't be loaded right now. Either ask the
+            game host for a new link, or try creating a game yourself!
+          </Typography>
+          <Button
+            variant="outlined"
+            onClick={() => dispatch(stopJoiningGame())}
+          >
+            Create new game
+          </Button>
+        </Alert>
       </Backdrop>
     );
   } else {

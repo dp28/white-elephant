@@ -46,7 +46,7 @@ function startToJoinGame({ hostId, gameId, dispatch }) {
   );
 }
 
-function loadGameDataFromURL() {
+export function loadGameDataFromURL() {
   const queryParams = new URLSearchParams(window.location.search);
   const hostId = queryParams.get("hostId");
   const gameId = queryParams.get("gameId");

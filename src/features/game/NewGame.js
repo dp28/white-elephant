@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import Alert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { startGame, selectGameToJoin } from "./gameSlice";
+import { startGame } from "./gameSlice";
 import {
   Card,
   CardContent,
@@ -37,11 +36,6 @@ const useStyles = makeStyles((theme) => ({
   button: {
     margin: theme.spacing(1),
   },
-  alert: {
-    position: "absolute",
-    margin: "auto",
-    top: theme.spacing(1),
-  },
   card: {
     maxWidth: "800px",
   },
@@ -66,7 +60,6 @@ const useStyles = makeStyles((theme) => ({
 
 export function NewGame() {
   const classes = useStyles();
-  const gameToJoin = useSelector(selectGameToJoin);
   const [name, setName] = useState("");
   const [host, setHost] = useState(null);
   const dispatch = useDispatch();
@@ -83,15 +76,6 @@ export function NewGame() {
   };
   return (
     <div className={classes.container}>
-      {gameToJoin.error && (
-        <Alert severity="error" className={classes.alert}>
-          <p>{gameToJoin.error}</p>
-          <p>
-            Unfortunately this game can't be loaded right now. Either ask the
-            game host for a new link, or try creating a game yourself!
-          </p>
-        </Alert>
-      )}
       <Card className={classes.card}>
         <CardHeader title="Create a new game" />
         <CardContent>

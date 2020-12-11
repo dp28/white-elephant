@@ -10,7 +10,7 @@ export function Game() {
 
   if (game) {
     return <CurrentGame />;
-  } else if (gameToJoin.loading || gameToJoin.game) {
+  } else if (gameToJoin.loading || gameToJoin.game || gameToJoin.error) {
     return <JoinGame />;
   } else {
     return <NewGame />;
