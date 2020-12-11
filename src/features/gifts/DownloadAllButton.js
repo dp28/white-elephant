@@ -17,6 +17,9 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
   },
+  button: {
+    marginTop: theme.spacing(1),
+  },
 }));
 
 export const DownloadAllButton = () => {
@@ -26,6 +29,7 @@ export const DownloadAllButton = () => {
   const imagesById = useSelector(selectImagesById);
   const [includeImages, setIncludeImages] = useState(true);
   const [includeGivers, setIncludeGivers] = useState(false);
+  const [includeMessages, setIncludeMessages] = useState(false);
   const game = useSelector(selectGame);
 
   const getImageFiles = async () => {
@@ -51,7 +55,7 @@ export const DownloadAllButton = () => {
           input: imageBlob,
         };
       } catch (error) {
-        console.log("Failed to download image for", gift.name, error);
+        console.error("Failed to download image for", gift.name, error);
         return null;
       }
     });
@@ -61,9 +65,18 @@ export const DownloadAllButton = () => {
   };
 
   const getResultsCSV = () => {
-    const headers = includeGivers
-      ? ["Gift name", "From", "To"]
-      : ["Gift name", "Received by"];
+    const headers = ["Gift name"];
+
+    if (includeGivers) {
+      headers.push("From");
+      headers.push("To");
+    } else {
+      headers.push("Received by");
+    }
+
+    if (includeMessages) {
+      headers.push("Secret message");
+    }
 
     const rows = gifts.map((gift) => {
       const result = [gift.name];
@@ -73,6 +86,10 @@ export const DownloadAllButton = () => {
       }
 
       result.push(playersById[gift.ownerId].name);
+
+      if (includeMessages) {
+        result.push(gift.messageToReceiver);
+      }
       return result;
     });
 
@@ -149,7 +166,24 @@ export const DownloadAllButton = () => {
         />
       </div>
       <div>
-        <Button color="primary" variant="contained" onClick={downloadAll}>
+        <FormControlLabel
+          label="Include the secret messages written by the players who brought each gift"
+          control={
+            <Checkbox
+              checked={includeMessages}
+              onChange={() => setIncludeMessages(!includeMessages)}
+              name="includeMessages"
+            />
+          }
+        />
+      </div>
+      <div>
+        <Button
+          className={classes.button}
+          color="primary"
+          variant="contained"
+          onClick={downloadAll}
+        >
           Download all gifts
         </Button>
       </div>

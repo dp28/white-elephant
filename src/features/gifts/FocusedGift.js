@@ -99,7 +99,7 @@ export function FocusedGift({ gift, interactive = false }) {
   const [revealToHost, setRevealToHost] = useState(false);
   const dispatch = useDispatch();
   const gameFinished = game.state === GameStates.FINISHED;
-  const ownedBySelf = owner.id === fetchId();
+  const ownedBySelf = owner?.id === fetchId();
   const isHost = game.hostId === fetchId();
 
   const reasonNotToSteal = calculateReasonCurrentPlayerCannotStealGift({
