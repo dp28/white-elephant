@@ -25,6 +25,9 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
   },
+  emphasis: {
+    fontWeight: "bold",
+  },
 }));
 
 export function CurrentTurnNotification() {
@@ -63,6 +66,11 @@ export function CurrentTurnNotification() {
                 game (eg to send gifts by post or email). Having the full list
                 to refer back to will help in case someone forgets who they need
                 to send something to!
+              </Typography>
+              <Typography gutterBottom>
+                <span className={classes.emphasis}>Warning!</span> If you leave
+                this page or start a new game, you may not have another chance
+                to download these results!
               </Typography>
               <DownloadAllButton />
             </>
