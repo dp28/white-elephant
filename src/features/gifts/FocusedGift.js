@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useSelector, useDispatch } from "react-redux";
+import Alert from "@material-ui/lab/Alert";
 import { selectImage } from "../images/imagesSlice";
 import { selectGame, GameStates } from "../game/gameSlice";
 import {
@@ -95,9 +96,11 @@ export function FocusedGift({ gift, interactive = false }) {
   const image = useSelector(selectImage(gift.imageId));
   const currentTurn = useSelector(selectCurrentTurn);
   const [unwrapped, setUnwrapped] = useState(false);
+  const [revealToHost, setRevealToHost] = useState(false);
   const dispatch = useDispatch();
   const gameFinished = game.state === GameStates.FINISHED;
   const ownedBySelf = owner.id === fetchId();
+  const isHost = game.hostId === fetchId();
 
   const reasonNotToSteal = calculateReasonCurrentPlayerCannotStealGift({
     gift,
@@ -212,26 +215,54 @@ export function FocusedGift({ gift, interactive = false }) {
                     : `Now owned by ${owner.name}`
                 }
               />
-              {gift.messageToReceiver && ownedBySelf && (
+              {gift.messageToReceiver && (
                 <>
                   <Divider />
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
                       Secret message
                     </Typography>
-                    <Typography gutterBottom>
-                      The player who brought this gift left you the following
-                      message:
-                    </Typography>
-                    <Typography className={classes.secretMessage}>
-                      {gift.messageToReceiver}
-                    </Typography>
+                    {(ownedBySelf || revealToHost) && (
+                      <>
+                        <Typography gutterBottom>
+                          The player who brought this gift left the following
+                          message:
+                        </Typography>
+                        <Typography className={classes.secretMessage}>
+                          {gift.messageToReceiver}
+                        </Typography>
+                      </>
+                    )}
+                    {!ownedBySelf && !revealToHost && isHost && (
+                      <div className={classes.secretMessageCover}>
+                        <Alert severity="warning">
+                          <Typography gutterBottom>
+                            This message was written for the player who received
+                            this gift, not you!
+                          </Typography>
+                          <Typography gutterBottom>
+                            However, as the host, you can still choose to see
+                            the message in case the player this was intended for
+                            is unable to (eg if they're offline).
+                          </Typography>
+                          <Typography gutterBottom>
+                            If you're sure you want to view this message, click
+                            "reveal message" below.
+                          </Typography>
+                        </Alert>
+                      </div>
+                    )}
                   </CardContent>
                 </>
               )}
               <Divider />
               <CardActions>
                 <Button onClick={unfocus}>Cancel</Button>
+                {!ownedBySelf && isHost && (
+                  <Button onClick={() => setRevealToHost(!revealToHost)}>
+                    {revealToHost ? "Hide message" : "Reveal message"}
+                  </Button>
+                )}
               </CardActions>
             </Card>
           )}
