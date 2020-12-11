@@ -12,6 +12,7 @@ import {
   Backdrop,
   CardActions,
   Button,
+  CardHeader,
 } from "@material-ui/core";
 import { openGift, selectCurrentTurn, stealGift } from "../turns/turnsSlice";
 import { fetchId } from "../../app/identity";
@@ -77,6 +78,14 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "row",
     justifyContent: "center",
   },
+  secretMessage: {
+    margin: theme.spacing(2),
+    borderLeft: `3px solid ${theme.palette.primary.dark}`,
+    color: theme.palette.primary.dark,
+    padding: theme.spacing(1),
+    background: theme.palette.grey[100],
+    fontStyle: "italic",
+  },
 }));
 
 export function FocusedGift({ gift, interactive = false }) {
@@ -87,6 +96,8 @@ export function FocusedGift({ gift, interactive = false }) {
   const currentTurn = useSelector(selectCurrentTurn);
   const [unwrapped, setUnwrapped] = useState(false);
   const dispatch = useDispatch();
+  const gameFinished = game.state === GameStates.FINISHED;
+  const ownedBySelf = owner.id === fetchId();
 
   const reasonNotToSteal = calculateReasonCurrentPlayerCannotStealGift({
     gift,
@@ -149,53 +160,81 @@ export function FocusedGift({ gift, interactive = false }) {
             </>
           )}
         </Card>
-
         <div className={classes.actionWrapper}>
-          <Card>
-            <CardContent>
-              {interactive &&
-                gift.wrapped &&
-                "Would you like to open this gift?"}
-              {interactive &&
-                !gift.wrapped &&
-                !unwrapped &&
-                reasonNotToSteal &&
-                `You can't steal this gift - ${reasonNotToSteal}`}
-              {interactive && !gift.wrapped && !reasonNotToSteal && !unwrapped && (
-                <span>
-                  Steal <span>{gift.name}</span> from <span>{owner.name}</span>?
-                </span>
+          {interactive && (
+            <Card>
+              <CardContent>
+                {gift.wrapped && "Would you like to open this gift?"}
+                {!gift.wrapped &&
+                  !unwrapped &&
+                  reasonNotToSteal &&
+                  `You can't steal this gift - ${reasonNotToSteal}`}
+                {!gift.wrapped && !reasonNotToSteal && !unwrapped && (
+                  <span>
+                    Steal <span>{gift.name}</span> from{" "}
+                    <span>{owner.name}</span>?
+                  </span>
+                )}
+                {unwrapped && (
+                  <span>
+                    You unwrapped <span>{gift.name}</span>!
+                  </span>
+                )}
+              </CardContent>
+              <Divider />
+              <CardActions>
+                {!unwrapped && <Button onClick={unfocus}>Cancel</Button>}
+                {unwrapped && (
+                  <Button color="primary" onClick={unfocus}>
+                    Done
+                  </Button>
+                )}
+                {gift.wrapped && (
+                  <Button color="primary" onClick={unwrap}>
+                    Open
+                  </Button>
+                )}
+                {!gift.wrapped && !reasonNotToSteal && !unwrapped && (
+                  <Button color="primary" onClick={steal}>
+                    Steal
+                  </Button>
+                )}
+              </CardActions>
+            </Card>
+          )}
+
+          {gameFinished && (
+            <Card>
+              <CardHeader
+                title={
+                  ownedBySelf
+                    ? "Your final gift!"
+                    : `Now owned by ${owner.name}`
+                }
+              />
+              {gift.messageToReceiver && ownedBySelf && (
+                <>
+                  <Divider />
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      Secret message
+                    </Typography>
+                    <Typography gutterBottom>
+                      The player who brought this gift left you the following
+                      message:
+                    </Typography>
+                    <Typography className={classes.secretMessage}>
+                      {gift.messageToReceiver}
+                    </Typography>
+                  </CardContent>
+                </>
               )}
-              {unwrapped && (
-                <span>
-                  You unwrapped <span>{gift.name}</span>!
-                </span>
-              )}
-              {!interactive &&
-                `${GameStates.FINISHED ? "Owned by" : "Currently held by"} ${
-                  owner.name
-                }`}
-            </CardContent>
-            <Divider />
-            <CardActions>
-              {!unwrapped && <Button onClick={unfocus}>Cancel</Button>}
-              {unwrapped && (
-                <Button color="primary" onClick={unfocus}>
-                  Done
-                </Button>
-              )}
-              {interactive && gift.wrapped && (
-                <Button color="primary" onClick={unwrap}>
-                  Open
-                </Button>
-              )}
-              {interactive && !gift.wrapped && !reasonNotToSteal && !unwrapped && (
-                <Button color="primary" onClick={steal}>
-                  Steal
-                </Button>
-              )}
-            </CardActions>
-          </Card>
+              <Divider />
+              <CardActions>
+                <Button onClick={unfocus}>Cancel</Button>
+              </CardActions>
+            </Card>
+          )}
         </div>
       </div>
     </Backdrop>

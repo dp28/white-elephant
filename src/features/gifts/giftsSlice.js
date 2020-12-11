@@ -3,6 +3,7 @@ import { addPlayer } from "../players/playersSlice";
 import { startExchangingGifts } from "../game/gameSlice";
 import { sortByOrdering } from "../../utils/arrays";
 import { openGift, stealGift } from "../turns/turnsSlice";
+import { fetchId } from "../../app/identity";
 
 export const giftsSlice = createSlice({
   name: "gifts",
@@ -71,6 +72,13 @@ export const giftsSlice = createSlice({
     builder.addCase("game/startNewGame", (state) => {
       state.giftsById = {};
       state.focusedGiftId = null;
+    });
+
+    builder.addCase("game/finishGame", (state) => {
+      const currentPlayerGift = Object.values(state.giftsById).find(
+        (gift) => gift.ownerId === fetchId()
+      );
+      state.focusedGiftId = currentPlayerGift.id;
     });
   },
 });
