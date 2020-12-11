@@ -259,7 +259,7 @@ export function FocusedGift({ gift, interactive = false }) {
               <Divider />
               <CardActions>
                 <Button onClick={unfocus}>Cancel</Button>
-                {!ownedBySelf && isHost && (
+                {!ownedBySelf && isHost && gift.messageToReceiver && (
                   <Button onClick={() => setRevealToHost(!revealToHost)}>
                     {revealToHost ? "Hide message" : "Reveal message"}
                   </Button>
