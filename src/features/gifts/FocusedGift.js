@@ -207,6 +207,19 @@ export function FocusedGift({ gift, interactive = false }) {
             </Card>
           )}
 
+          {!interactive && !gameFinished && (
+            <Card>
+              <CardContent>
+                Currently belongs to {ownedBySelf ? "you" : owner.name}
+              </CardContent>
+              <Divider />
+
+              <CardActions>
+                <Button onClick={unfocus}>Cancel</Button>
+              </CardActions>
+            </Card>
+          )}
+
           {gameFinished && (
             <Card>
               <CardHeader
